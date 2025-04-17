@@ -31,6 +31,10 @@ public class PermissionEntityManagement {
     //通过如下写法完成初始化
     PermissionBase Del =new PermissionLeaf("delete");
     public void INTI(){
+        Doctor.add(patinent);
+        all.add(Doctor);
+        all.add(Admin);
+
         Admin.add(Del);
     }
 
