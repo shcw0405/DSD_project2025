@@ -3,7 +3,7 @@ public class PermissionEntityManagement {
 
     }
     static PermissionEntityManagement Instance;
-    public PermissionEntityManagement GetSingleton(){
+    static public PermissionEntityManagement GetSingleton(){
         if(Instance==null){
             Instance = new PermissionEntityManagement();
         }
@@ -22,13 +22,14 @@ public class PermissionEntityManagement {
         return all;
     }
 
+
+    PermissionNode Doctor = new PermissionNode();
+    PermissionNode patinent = new PermissionNode();
+    PermissionNode Admin = new PermissionNode();
+    PermissionNode all = new PermissionNode();
+    //通过如下写法完成初始化
     //手动设置权限
     //添加权限树的儿子节点
-    PermissionNode Doctor;
-    PermissionNode patinent;
-    PermissionNode Admin;
-    PermissionNode all;
-    //通过如下写法完成初始化
     PermissionBase Del =new PermissionLeaf("delete");
     public void INTI(){
         Doctor.add(patinent);

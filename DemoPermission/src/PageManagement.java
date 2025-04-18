@@ -5,7 +5,7 @@ public class PageManagement {
 
     }
     static PageManagement Instance;
-    public PageManagement GetSingleton(){
+    static public PageManagement GetSingleton(){
         if(Instance==null){
             Instance = new PageManagement();
         }

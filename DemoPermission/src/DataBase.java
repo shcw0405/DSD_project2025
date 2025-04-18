@@ -4,9 +4,7 @@ public class DataBase extends Base{
         data = x;
     }
     @Override
-    public int GETDATE() {
-        return data;
-    }
+    public int GETDATE() {return data;}
 
     @Override
     public int GET(PermissionBase p) {
