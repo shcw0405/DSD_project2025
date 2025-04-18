@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-
 public class PageManagement {
     private PageManagement(){
 
@@ -16,6 +15,9 @@ public class PageManagement {
         for(Facade f : List){
             f.INTI(user);
         }
+    }
+    public ArrayList<Facade> GetPages(){
+        return List;
     }
     public void add(Facade f){
         List.add(f);

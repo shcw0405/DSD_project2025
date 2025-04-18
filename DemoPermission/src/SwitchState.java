@@ -1,8 +1,10 @@
+import java.security.PrivateKey;
 import java.util.ArrayList;
 
 public class SwitchState {
     private boolean state=false;
-    private ArrayList<Observer> List = new ArrayList<Observer>();
+    private  ArrayList<Observer> List = new ArrayList<Observer>();
+
     public void ObjAdd(Observer o){
         List.add(o);
     }
@@ -13,7 +15,7 @@ public class SwitchState {
         return state;
     }
     public void Switch(){
-        state= !state;
+        this.state= !this.state;
         for(Observer o : List){
             Notify(o);
         }
