@@ -1,23 +1,47 @@
 package com.example.factorial.src;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.factorial.src.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
 
-public class DataBase extends Base{
-    private int data;
-    public DataBase(){
+@Service
+public class DataBase extends Base {
+    private final UserRepository userRepository;
+    
+    @Autowired
+    public DataBase(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
+    
     @Override
-    public int GETDATE() {return data;}
+    public int GETDATE() {
+        // 计算用户数量作为示例
+        return (int) userRepository.count();
+    }
 
     @Override
     public int GET(PermissionBase p) {
-        return 0;
+        // 这里可以根据权限检查用户访问权限
+        if (p != null) {
+            return 1; // 有权限
+        }
+        return 0; // 无权限
     }
-
-
+    
+    // 获取所有用户
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+    
+    // 根据用户名查找用户
+    public User findUserByName(String uName) {
+        return userRepository.findByuName(uName);
+    }
+    
+    // 保存用户
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
 }

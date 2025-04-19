@@ -1,10 +1,12 @@
 package com.example.factorial.src;
 
 import java.util.ArrayList;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SwitchState {
     private boolean state=false;
-    private  ArrayList<Observer> List = new ArrayList<Observer>();
+    private ArrayList<Observer> List = new ArrayList<Observer>();
 
     public void ObjAdd(Observer o){
         List.add(o);
