@@ -1,130 +1,175 @@
 <!-- eslint-disable vue/multi-word-component-names -->
-
 <template>
-  <div class="login">
-    <div class="background"></div>
-    <div class="login-content">
-      <h2>登录</h2>
-      <input
-        v-model="form.username"
-        type="text"
-        placeholder="请输入用户名"
-        @keyup.enter="handleLogin"
-      />
-      <input
-        v-model="form.password"
-        type="password"
-        placeholder="请输入密码"
-        @keyup.enter="handleLogin"
-      />
-      <button @click="handleLogin" :disabled="loading">
-        {{ loading ? '登录中...' : '登录' }}
-      </button>
-      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-    </div>
+  <div class="login-container">
+    <el-card class="login-card">
+      <template #header>
+        <div class="card-header">
+          <h2>{{ isRegistering ? "用户注册" : "用户登录" }}</h2>
+        </div>
+      </template>
+
+      <el-form
+        ref="loginForm"
+        :model="loginForm"
+        :rules="loginRules"
+        label-width="80px"
+      >
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="loginForm.username" placeholder="请输入用户名" />
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input
+            v-model="loginForm.password"
+            type="password"
+            placeholder="请输入密码"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" :loading="loading" @click="handleSubmit">{{
+            isRegistering ? "注册" : "登录"
+          }}</el-button>
+          <el-button @click="toggleRegister">{{
+            isRegistering ? "已有账号？登录" : "没有账号？注册"
+          }}</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-//import { mapActions } from 'vuex'; // 如果使用Vuex管理登录状态
+import axios from "axios";
+import { ElMessage } from "element-plus";
 
 export default {
   data() {
     return {
-      form: {
-        username: '',
-        password: ''
+      loginForm: {
+        username: "",
+        password: "",
+      },
+      loginRules: {
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+        ],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
       },
       loading: false,
-      errorMessage: ''
+      isRegistering: false,
     };
   },
   methods: {
-    async handleLogin() {
-      // 1. 前端验证
-      if (!this.form.username || !this.form.password) {
-        this.errorMessage = '用户名和密码不能为空';
-        return;
-      }
+    handleSubmit() {
+      this.$refs.loginForm.validate(async (valid) => {
+        if (valid) {
+          this.loading = true;
+          try {
+            const apiEndpoint = this.isRegistering
+              ? "/api/Signup"
+              : "/api/login";
+            const response = await axios.post(apiEndpoint, this.loginForm, {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
 
-      this.loading = true;
-      this.errorMessage = '';
+            if (response.status === 200) {
+              if (this.isRegistering) {
+                ElMessage.success(
+                  `注册成功！欢迎您，${this.loginForm.username}！`
+                );
+                this.toggleRegister(); // 注册成功后切换到登录界面
+              } else {
+                // 保存用户名到本地存储
+                localStorage.setItem("username", this.loginForm.username);
 
-      try {
-        // 2. 调用后端API
-        const response = await axios.post('/api/login', this.form);
-
-        // 3. 处理登录成功
-        localStorage.setItem('token', response.data.token); // 存储token
-        //this.$store.commit('setUser', response.data.user); // Vuex存储用户信息
-
-        // 4. 跳转到目标页面
-        this.$router.push("/user")
-
-      } catch (error) {
-        // 5. 错误处理
-        this.errorMessage = error.response?.data?.message ||
-                          error.message ||
-                          '登录失败，请重试';
-        console.error('登录错误:', error);
-      } finally {
-        this.loading = false;
-      }
-    }
-  }
+                // 登录成功处理
+                if (this.loginForm.username === "Admin") {
+                  this.$router.push({ name: "AdminPage" });
+                } else if (/^DOC\d+$/.test(this.loginForm.username)) {
+                  this.$router.push({ name: "PatientManage" });
+                } else if (/^\d+$/.test(this.loginForm.username)) {
+                  this.$router.push({
+                    name: "PatientPage",
+                    params: { id: this.loginForm.username },
+                  });
+                } else {
+                  ElMessage.info("登录成功，正在跳转...");
+                  // 可以添加一个默认跳转或者根据后端返回的角色信息跳转
+                  this.$router.push({ path: "/" }); // 默认跳转到首页
+                }
+              }
+            }
+          } catch (error) {
+            let errorMessage = "操作失败，请稍后重试";
+            if (error.response) {
+              if (error.response.status === 401) {
+                errorMessage = this.isRegistering
+                  ? "用户名已存在或格式不正确"
+                  : "用户名或密码错误";
+              } else {
+                errorMessage =
+                  error.response.data?.message ||
+                  `服务器错误 (${error.response.status})`;
+              }
+            } else if (error.request) {
+              errorMessage = "网络错误，请检查连接";
+            }
+            ElMessage.error(errorMessage);
+            console.error(
+              this.isRegistering ? "注册错误:" : "登录错误:",
+              error
+            );
+          } finally {
+            this.loading = false;
+          }
+        } else {
+          ElMessage.error("请填写完整的登录信息！");
+          return false;
+        }
+      });
+    },
+    toggleRegister() {
+      this.isRegistering = !this.isRegistering;
+      this.resetForm();
+    },
+    resetForm() {
+      this.$refs.loginForm.resetFields();
+    },
+  },
 };
 </script>
 
 <style scoped>
-.error {
-  color: red;
-  margin-top: 10px;
-}
-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-</style>
-
-<style scoped>
-.login {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
+.login-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 100vh;
+  background-color: #f2f6fc; /* Light background color, typical for admin interfaces */
 }
-.background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('@/assets/fig1.png') no-repeat center center;
-  background-size: cover;
-  opacity: 0.5; /* 设置透明度为50% */
-  z-index: 1;
+
+.login-card {
+  width: 400px;
+  max-width: 90%;
 }
-.login-content {
-  position: relative;
-  z-index: 2;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 40px;
-  border-radius: 10px;
+
+.card-header {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
+  padding-bottom: 20px;
 }
-input {
-  padding: 10px;
-  margin: 10px;
-  width: 200px;
+
+.el-form {
+  padding: 20px;
 }
-button {
-  padding: 10px 20px;
-  cursor: pointer;
+
+.el-form-item {
+  margin-bottom: 20px;
+}
+
+.el-button {
+  margin-right: 10px;
 }
 </style>

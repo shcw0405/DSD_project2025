@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         // 先启动Spring应用
         SpringApplication.run(Main.class, args);
-        System.out.println("后端已启动，访问 http://localhost:12345");
+        System.out.println("后端已启动，访问 https://localhost:12345");
         
         // 然后初始化应用业务逻辑
         try {
