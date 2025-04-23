@@ -2,6 +2,9 @@
   <div class="patient-management-page">
     <div class="header">
       <h2>患者步态分析报告</h2>
+      <div class="header-actions">
+        <el-button type="primary" @click="view3DData">查看3D分析数据</el-button>
+      </div>
     </div>
 
     <div class="content">
@@ -54,9 +57,10 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import axios from "axios";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
+const router = useRouter();
 
 // 数据模型
 const searchQuery = ref("");
@@ -114,6 +118,10 @@ const showReportDetails = (row) => {
   selectedReportData.value = row;
 };
 
+const view3DData = () => {
+  router.push(`/patient/${patientId.value}/3d-view`);
+};
+
 const fetchPatientReports = async () => {
   try {
     const response = await axios.get(`/api/patient/${patientId.value}/reports`);
@@ -146,6 +154,14 @@ onMounted(() => {
   border-radius: 5px;
   margin-bottom: 20px;
   text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
 }
 
 h2 {

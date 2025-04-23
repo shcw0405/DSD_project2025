@@ -7,6 +7,7 @@ import UserPage from "../components/UserPage.vue";
 import PatientManage from "../components/PatientManage.vue";
 import PatientPage from "../components/PatientPage.vue"; // 确保这里是正确的文件名
 import AdminPage from "../components/AdminPage.vue"; // 确保这里是正确的文件名
+import Patient3DView from "../components/Patient3DView.vue"; // 添加3D视图组件导入
 
 const routes = [
   {
@@ -39,6 +40,12 @@ const routes = [
     path: "/bluetooth",
     name: "BlueTooth",
     component: () => import("@/components/BlueTooth.vue"),
+  },
+  {
+    path: "/patient/:id/3d-view",
+    name: "Patient3DView",
+    component: Patient3DView,
+    props: true, // 将路由参数作为 props 传递给组件
   },
   // 移除重复的 patient-manage 路由
 ];

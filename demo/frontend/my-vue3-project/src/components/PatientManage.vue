@@ -215,8 +215,10 @@ function resetView() {
 
 function showMeasurementData(patientId) {
   currentPatientId.value = patientId;
-  show3DData.value = true;
-  historyData.value = [];
+  router.push({
+    name: "Patient3DView",
+    params: { id: patientId },
+  });
 }
 
 function showHistoryData(patientId) {
