@@ -9,7 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/doctors") // 统一使用复数形式
+@RequestMapping("/doctors") // 统一使用复数形式
 public class DoctorController {
 
     private final DoctorService doctorService;

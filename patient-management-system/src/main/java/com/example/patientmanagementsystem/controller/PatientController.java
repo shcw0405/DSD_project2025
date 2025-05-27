@@ -35,7 +35,7 @@ public class PatientController {
     /**
      * 获取患者列表（分页与搜索） - 管理员接口
      */
-    @GetMapping("/api/admin/patients")
+    @GetMapping("/admin/patients")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<PatientListResponseDTO>> getPatients(
             @RequestParam(defaultValue = "1") int page,
@@ -52,7 +52,7 @@ public class PatientController {
     /**
      * 搜索患者（用于下拉选择）- 管理员接口
      */
-    @GetMapping("/api/admin/patients/search")
+    @GetMapping("/admin/patients/search")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<Map<String, Object>>>> searchPatients(
             @RequestParam(required = false, defaultValue = "") String query) {
@@ -64,7 +64,7 @@ public class PatientController {
     /**
      * 更新患者信息 - 管理员接口
      */
-    @PutMapping("/api/admin/patients/{id}")
+    @PutMapping("/admin/patients/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> updatePatient(
             @PathVariable String id,
@@ -77,7 +77,7 @@ public class PatientController {
     /**
      * 删除患者 - 管理员接口
      */
-    @DeleteMapping("/api/admin/patients/{id}")
+    @DeleteMapping("/admin/patients/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deletePatient(@PathVariable String id) {
         patientService.deletePatient(id);
@@ -86,9 +86,9 @@ public class PatientController {
 
     /**
      * 获取某位患者的步态评估报告列表
-     * 接口路径: /api/patients/{patientId}/reports
+     * 接口路径: /patients/{patientId}/reports
      */
-    @GetMapping("/api/patients/{patientId}/reports")
+    @GetMapping("/patients/{patientId}/reports")
     @PreAuthorize("@patientSecurityService.canAccessPatientData(#patientId)")
     public ResponseEntity<ApiResponse<List<PatientReportDTO>>> getPatientReports(
             @PathVariable String patientId) {
