@@ -1,0 +1,7 @@
+com\example\patientmanagementsystem\integration\AuthIntegrationTest.class
+com\example\patientmanagementsystem\service\AuthServiceTest.class
+com\example\patientmanagementsystem\service\DoctorServiceTest.class
+com\example\patientmanagementsystem\util\CSVProcessorTest.class
+com\example\patientmanagementsystem\repository\UserRepositoryTest.class
+com\example\patientmanagementsystem\controller\AuthControllerTest.class
+com\example\patientmanagementsystem\PatientManagementSystemApplicationTests.class
