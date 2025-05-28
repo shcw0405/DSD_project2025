@@ -240,7 +240,7 @@ public class DataService {
             }
             logger.info("所有4个cleaned文件已读取到字符串。 ({})", cleanedFileContentsForDb.size());
 
-            LinkedHashMap<String, Double> analysisResultMap;
+            Map<String, Double> analysisResultMap;
             try {
                 analysisResultMap = Analysis.Statistic(
                     cleanedFileContentsForDb.get(0),

@@ -1,8 +1,10 @@
 package com.example.patientmanagementsystem.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
 /**
  * 统一API响应格式
@@ -10,11 +12,37 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
     private int status;
     private T data;
     private String message;
+    private Long total;
+
+    public ApiResponse(int status, T data, String message) {
+        this.status = status;
+        this.data = data;
+        this.message = message;
+        this.total = null;
+    }
+
+    public ApiResponse(int status, T data, String message, Long total) {
+        this.status = status;
+        this.data = data;
+        this.message = message;
+        this.total = total;
+    }
+
+    /**
+     * 创建成功响应 (列表数据与总数)
+     * @param data 列表数据
+     * @param total 总数
+     * @param message 成功消息
+     * @return 成功响应
+     */
+    public static <T> ApiResponse<List<T>> success(List<T> data, long total, String message) {
+        return new ApiResponse<>(200, data, message, total);
+    }
 
     /**
      * 创建成功响应
@@ -34,6 +62,11 @@ public class ApiResponse<T> {
      * @return 成功响应
      */
     public static <T> ApiResponse<T> success(T data, String message) {
+        if (data instanceof DoctorListResponseDTO || data instanceof PatientListResponseDTO || data instanceof RelationListResponseDTO) {
+            // 这是一个潜在的问题点，理想情况下应该通过编译时检查或更严格的类型来避免
+            // 但为了不破坏现有代码，这里暂时不抛出异常，依赖开发者正确调用
+            // System.out.println("警告: 为分页数据调用了不带 total 的 success 方法。请考虑使用 success(List<T> data, long total, String message)");
+        }
         return new ApiResponse<>(200, data, message);
     }
 
@@ -135,6 +168,6 @@ public class ApiResponse<T> {
      * @return 服务器错误响应
      */
     public static <T> ApiResponse<T> serverError(String message) {
-        return new ApiResponse<>(500, null, message);
+        return new ApiResponse<>(500, null, message, null);
     }
 }

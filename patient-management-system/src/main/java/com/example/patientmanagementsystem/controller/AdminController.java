@@ -1,6 +1,7 @@
 package com.example.patientmanagementsystem.controller;
 
 import com.example.patientmanagementsystem.dto.ApiResponse;
+import com.example.patientmanagementsystem.dto.DoctorDTO;
 import com.example.patientmanagementsystem.dto.DoctorListResponseDTO;
 import com.example.patientmanagementsystem.dto.DoctorRegistrationRequestDTO;
 import com.example.patientmanagementsystem.dto.DoctorRegistrationResponseDataDTO;
@@ -51,7 +52,7 @@ public class AdminController {
      * @return ApiResponse 包含医生列表和总数
      */
     @GetMapping("/doctors")
-    public ResponseEntity<ApiResponse<DoctorListResponseDTO>> getDoctors(
+    public ResponseEntity<ApiResponse<List<DoctorDTO>>> getDoctors(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int pageSize,
             @RequestParam(required = false) String name,
@@ -60,7 +61,7 @@ public class AdminController {
             @RequestParam(required = false) String department) {
         
         DoctorListResponseDTO result = doctorService.getDoctors(page, pageSize, name, phone, hospital, department);
-        return ResponseEntity.ok(ApiResponse.success(result, "获取医生列表成功"));
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getTotal(), "获取医生列表成功"));
     }
 
     /**

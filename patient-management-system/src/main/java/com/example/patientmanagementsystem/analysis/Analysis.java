@@ -60,21 +60,21 @@ class Adduction{
 }
 class ExRotation{
     public static double Left(Sensor L1,Sensor L2,Sensor L3,Sensor R1,Sensor R2,Sensor R3){
-        double a = L3.Roll;
+        double a = L3.Yaw;
         return a;
     }
     public static double Right(Sensor L1,Sensor L2,Sensor L3,Sensor R1,Sensor R2,Sensor R3){
-        double a = R3.Roll;
+        double a = R3.Yaw;
         return a;
     }
 }
 class InRotation{
     public static double Left(Sensor L1,Sensor L2,Sensor L3,Sensor R1,Sensor R2,Sensor R3){
-        double a = L3.Roll;
+        double a = L3.Yaw;
         return a;
     }
     public static double Right(Sensor L1,Sensor L2,Sensor L3,Sensor R1,Sensor R2,Sensor R3){
-        double a = R3.Roll;
+        double a = R3.Yaw;
         return a;
     }
 }
@@ -96,7 +96,46 @@ public class Analysis {
 
     static ArrayList<Double> InRotationLeft = new ArrayList<>();
     static ArrayList<Double> InRotationRight = new ArrayList<>();
-
+    static void cl(ArrayList<Double> Angle){
+        Collections.sort(Angle);
+        int i=0;
+        int n = Angle.size();
+        int MID = n / 2;
+        if(Angle.get(MID)>100){
+            while (i < Angle.size()) {
+                double angle = Angle.get(i);
+                if (angle < 0) {
+                    // 移除当前角度
+                    Angle.remove(i);
+                    // 计算调整后的角度
+                    double adjustedAngle = angle + 360;
+                    // 将调整后的角度添加回列表
+                    Angle.add(adjustedAngle);
+                    // 由于移除了一个元素，索引不需要增加
+                } else {
+                    // 当前角度不大于0，移动到下一个元素
+                    i++;
+                }
+            }
+        }
+        else if(Angle.get(MID)<-100){
+            while (i < Angle.size()) {
+                double angle = Angle.get(i);
+                if (angle > 0) {
+                    // 移除当前角度
+                    Angle.remove(i);
+                    // 计算调整后的角度
+                    double adjustedAngle = angle - 360;
+                    // 将调整后的角度添加回列表
+                    Angle.add(adjustedAngle);
+                    // 由于移除了一个元素，索引不需要增加
+                } else {
+                    // 当前角度不大于0，移动到下一个元素
+                    i++;
+                }
+            }
+        }
+    }
     static double GetMaxMid(ArrayList<Double> Angle){
         Collections.sort(Angle);
         
@@ -120,8 +159,9 @@ public class Analysis {
         int MIN = 0 + delta;
         int MID = n / 2;
         int MAX = n - delta;
+        //System.out.println("Angle values:"+Angle);
         double res = Angle.get(MID) - Angle.get(MIN);
-      //  System.out.println("Angle values:"+Angle);
+     // 
       //  System.out.println("Angle values:"+Angle.get(MID));
 //        if(res < 0) res += 360;
         return res;
@@ -349,90 +389,110 @@ public class Analysis {
         Scanner sc2 = new Scanner(sr2);
         Scanner sc3 = new Scanner(sr3);
         Scanner sc4 = new Scanner(sr4);
-
-        try {
-            // Skip headers for all scanners
-            for(int i=1;i<=12;++i) { // Assuming 12 header columns as before
-                if (sc1.hasNext()) sc1.next(); else throw new CsvValidationException("CSV 文件1表头不完整或数据行过少");
-                if (sc2.hasNext()) sc2.next(); else throw new CsvValidationException("CSV 文件2表头不完整或数据行过少");
-                if (sc3.hasNext()) sc3.next(); else throw new CsvValidationException("CSV 文件3表头不完整或数据行过少");
-                if (sc4.hasNext()) sc4.next(); else throw new CsvValidationException("CSV 文件4表头不完整或数据行过少");
-            }
-
-            ArrayList<Sensor> Data1 = new ArrayList<Sensor>();
-            ArrayList<Sensor> Data2 = new ArrayList<Sensor>();
-            ArrayList<Sensor> Data3 = new ArrayList<Sensor>();
-            ArrayList<Sensor> Data4 = new ArrayList<Sensor>();
-
-            // Reading data for sc1
-            while(sc1.hasNext()){
-                Sensor cur = new Sensor();
-                cur.date = sc1.next();
-                cur.timestamp = sc1.next(); // Potential point for "missing timestamp column"
-                cur.ID = sc1.next();
-                cur.name = sc1.next();
-                cur.AccX = sc1.nextDouble();
-                cur.AccY = sc1.nextDouble();
-                cur.AccZ = sc1.nextDouble();
-                cur.GyroX = sc1.nextDouble();
-                cur.GyroY = sc1.nextDouble();
-                cur.GyroZ = sc1.nextDouble();
-                cur.Roll = sc1.nextDouble();
-                cur.Pitch = sc1.nextDouble();
-                cur.Yaw = sc1.nextDouble();
-                Data1.add(cur);
-            }
-            // Similar while loops for sc2, sc3, sc4...
-            while(sc2.hasNext()){ // For sc2
-                Sensor cur = new Sensor();
-                cur.date = sc2.next(); cur.timestamp = sc2.next(); cur.ID = sc2.next(); cur.name = sc2.next();
-                cur.AccX = sc2.nextDouble(); cur.AccY = sc2.nextDouble(); cur.AccZ = sc2.nextDouble();
-                cur.GyroX = sc2.nextDouble(); cur.GyroY = sc2.nextDouble(); cur.GyroZ = sc2.nextDouble();
-                cur.Roll = sc2.nextDouble(); cur.Pitch = sc2.nextDouble(); cur.Yaw = sc2.nextDouble();
-                Data2.add(cur);
-            }
-            while(sc3.hasNext()){ // For sc3
-                Sensor cur = new Sensor();
-                cur.date = sc3.next(); cur.timestamp = sc3.next(); cur.ID = sc3.next(); cur.name = sc3.next();
-                cur.AccX = sc3.nextDouble(); cur.AccY = sc3.nextDouble(); cur.AccZ = sc3.nextDouble();
-                cur.GyroX = sc3.nextDouble(); cur.GyroY = sc3.nextDouble(); cur.GyroZ = sc3.nextDouble();
-                cur.Roll = sc3.nextDouble(); cur.Pitch = sc3.nextDouble(); cur.Yaw = sc3.nextDouble();
-                Data3.add(cur);
-            }
-            while(sc4.hasNext()){ // For sc4
-                Sensor cur = new Sensor();
-                cur.date = sc4.next(); cur.timestamp = sc4.next(); cur.ID = sc4.next(); cur.name = sc4.next();
-                cur.AccX = sc4.nextDouble(); cur.AccY = sc4.nextDouble(); cur.AccZ = sc4.nextDouble();
-                cur.GyroX = sc4.nextDouble(); cur.GyroY = sc4.nextDouble(); cur.GyroZ = sc4.nextDouble();
-                cur.Roll = sc4.nextDouble(); cur.Pitch = sc4.nextDouble(); cur.Yaw = sc4.nextDouble();
-                Data4.add(cur);
-            }
-
-            // Check if any data was actually read (after headers)
-            if (Data1.isEmpty() && Data2.isEmpty() && Data3.isEmpty() && Data4.isEmpty()) {
-                throw new CsvValidationException("所有CSV文件均未包含有效的数据行 (表头之后)");
-            }
-
-            Calculate1(Data1); 
-            Calculate2(Data2);
-            Calculate3(Data3); 
-            Calculate4(Data4);
-        } catch (InputMismatchException e) {
-            throw new CsvValidationException("CSV文件内容格式错误：期望的数值类型与实际读取到的不匹配。", e);
-        } catch (NoSuchElementException e) {
-            throw new CsvValidationException("CSV文件内容不完整：读取数据时发现缺少预期的列或行。", e);
-        } finally {
-            sc1.close();
-            sc2.close();
-            sc3.close();
-            sc4.close();
+        for(int i=1;i<=12;++i) {
+            sc1.next();
+            sc2.next();
+            sc3.next();
+            sc4.next();
         }
+
+        ArrayList<Sensor> Data1 = new ArrayList<Sensor>();
+        ArrayList<Sensor> Data2 = new ArrayList<Sensor>();
+        ArrayList<Sensor> Data3 = new ArrayList<Sensor>();
+        ArrayList<Sensor> Data4 = new ArrayList<Sensor>();
+        while(sc1.hasNext()){
+            Sensor cur = new Sensor();
+            cur.date = sc1.next();
+            cur.timestamp = sc1.next();
+            cur.ID = sc1.next();
+            cur.name = sc1.next();
+            cur.AccX = sc1.nextDouble();
+            cur.AccY = sc1.nextDouble();
+            cur.AccZ = sc1.nextDouble();
+            cur.GyroX = sc1.nextDouble();
+            cur.GyroY = sc1.nextDouble();
+            cur.GyroZ = sc1.nextDouble();
+            cur.Roll = sc1.nextDouble();
+            cur.Pitch = sc1.nextDouble();
+            cur.Yaw = sc1.nextDouble();
+            Data1.add(cur);
+        }
+        while(sc2.hasNext()){
+            Sensor cur = new Sensor();
+            cur.date = sc2.next();
+            cur.timestamp = sc2.next();
+            cur.ID = sc2.next();
+            cur.name = sc2.next();
+            cur.AccX = sc2.nextDouble();
+            cur.AccY = sc2.nextDouble();
+            cur.AccZ = sc2.nextDouble();
+            cur.GyroX = sc2.nextDouble();
+            cur.GyroY = sc2.nextDouble();
+            cur.GyroZ = sc2.nextDouble();
+            cur.Roll = sc2.nextDouble();
+            cur.Pitch = sc2.nextDouble();
+            cur.Yaw = sc2.nextDouble();
+            Data2.add(cur);
+        }
+        while(sc3.hasNext()){
+            Sensor cur = new Sensor();
+            cur.date = sc3.next();
+            cur.timestamp = sc3.next();
+            cur.ID = sc3.next();
+            cur.name = sc3.next();
+            cur.AccX = sc3.nextDouble();
+            cur.AccY = sc3.nextDouble();
+            cur.AccZ = sc3.nextDouble();
+            cur.GyroX = sc3.nextDouble();
+            cur.GyroY = sc3.nextDouble();
+            cur.GyroZ = sc3.nextDouble();
+            cur.Roll = sc3.nextDouble();
+            cur.Pitch = sc3.nextDouble();
+            cur.Yaw = sc3.nextDouble();
+            Data3.add(cur);
+        }
+        while(sc4.hasNext()){
+            Sensor cur = new Sensor();
+            cur.date = sc4.next();
+            cur.timestamp = sc4.next();
+            cur.ID = sc4.next();
+            cur.name = sc4.next();
+            cur.AccX = sc4.nextDouble();
+            cur.AccY = sc4.nextDouble();
+            cur.AccZ = sc4.nextDouble();
+            cur.GyroX = sc4.nextDouble();
+            cur.GyroY = sc4.nextDouble();
+            cur.GyroZ = sc4.nextDouble();
+            cur.Roll = sc4.nextDouble();
+            cur.Pitch = sc4.nextDouble();
+            cur.Yaw = sc4.nextDouble();
+            Data4.add(cur);
+        }
+        sc1.close();
+        sc2.close();
+        sc3.close();
+        sc4.close();
+        Calculate1(Data1); 
+        Calculate2(Data2);
+        Calculate3(Data3); 
+        Calculate4(Data4);
     }
-    public static LinkedHashMap<String,Double> Statistic(String s1,String s2,String s3,String s4){
-        clearStaticState();
+    public static HashMap<String,Double> Statistic(String s1,String s2,String s3,String s4){
         StringRead(s1,s2,s3,s4);
         double rem1,rem2,rem3,rem4,rem5,rem6,rem7,rem8,rem9,rem10,rem11,rem12;
         LinkedHashMap<String,Double> res = new LinkedHashMap<>();
+        cl(FlexionLeft);
+        cl(FlexionRight);
+        cl(ExtensionLeft);
+        cl(ExtensionRight);
+        cl(AbductionLeft);
+        cl(AbductionRight);
+        cl(AdductionLeft);
+        cl(AdductionRight);
+        cl(ExRotationLeft);
+        cl(ExRotationRight);
+        cl(InRotationLeft);
+        cl(InRotationRight);
         rem1=GetMidMin(FlexionLeft)+90;
         rem2=GetMidMin(FlexionRight)+90;
         res.put("左前屈",rem1);
@@ -449,12 +509,12 @@ public class Analysis {
         rem8=GetMidMin(AdductionRight)*1.5;
         res.put("左内收",rem7);
         res.put("右内收",rem8);
-        rem9=GetMaxMid(ExRotationLeft)*1.5;
-        rem10=GetMidMin(ExRotationRight)*1.5;
+        rem9=GetMaxMid(ExRotationLeft);
+        rem10=GetMaxMid(ExRotationRight);
         res.put("左外旋",rem9);
         res.put("右外旋",rem10);
-         rem11=GetMidMin(InRotationLeft)*1.1;
-        rem12=GetMaxMid(InRotationRight)*1.1;
+        rem11=GetMidMin(InRotationLeft);
+        rem12=GetMidMin(InRotationRight);
         res.put("左内旋",rem11);
         res.put("右内旋",rem12);
         res.put("左前屈差值",rem1-125);
@@ -469,23 +529,9 @@ public class Analysis {
         res.put("右外旋差值",rem10-30);
         res.put("左内旋差值",rem11-10);
         res.put("右内旋差值",rem12-10);
-       /*  for (Map.Entry<String, Double> entry : res.entrySet()) {
+       /*   for (Map.Entry<String, Double> entry : res.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }*/
         return res;
-    }
-    public static void clearStaticState() {
-        FlexionLeft.clear();
-        FlexionRight.clear();
-        ExtensionLeft.clear();
-        ExtensionRight.clear();
-        AbductionLeft.clear();
-        AbductionRight.clear();
-        AdductionLeft.clear();
-        AdductionRight.clear();
-        ExRotationLeft.clear();
-        ExRotationRight.clear();
-        InRotationLeft.clear();
-        InRotationRight.clear();
     }
 }

@@ -29,7 +29,7 @@ public class StandaloneAnalysisTest {
             System.out.println("Successfully read: " + csvPath4 + " (length: " + csvContent4.length() + ")");
 
             System.out.println("\nCalling Analysis.Statistic()...");
-            LinkedHashMap<String, Double> statistics = Analysis.Statistic(csvContent1, csvContent2, csvContent3, csvContent4);
+            LinkedHashMap<String, Double> statistics = v2_Analysis.Statistic(csvContent1, csvContent2, csvContent3, csvContent4);
 
             System.out.println("\n--- Statistics Results ---");
             if (statistics != null && !statistics.isEmpty()) {
