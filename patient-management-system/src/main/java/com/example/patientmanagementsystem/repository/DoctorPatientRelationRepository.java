@@ -41,19 +41,21 @@ public interface DoctorPatientRelationRepository extends JpaRepository<DoctorPat
     List<Object[]> findAllRelationsWithDetails();
     
     @Query("SELECT new com.example.patientmanagementsystem.dto.DoctorPatientRelationDTO(" +
-           "r.doctor.id, r.doctor.name, r.patient.id, r.patient.name) " +
-           "FROM DoctorPatientRelation r JOIN r.doctor d JOIN d.user du " +
+           "du.id, d.name, pu.id, p.name) " +
+           "FROM DoctorPatientRelation r " +
+           "JOIN r.doctor d JOIN d.user du " +
+           "JOIN r.patient p JOIN p.user pu " +
            "WHERE (:doctorName IS NULL OR d.name LIKE %:doctorName%) " +
            "AND (:doctorPhone IS NULL OR d.phone LIKE %:doctorPhone%) " +
-           "AND (:patientName IS NULL OR r.patient.name LIKE %:patientName%) " +
-           "AND (:patientPhone IS NULL OR r.patient.phone LIKE %:patientPhone%) " +
-           "AND (:requestingDoctorId IS NULL OR d.id = :requestingDoctorId)")
+           "AND (:patientName IS NULL OR p.name LIKE %:patientName%) " +
+           "AND (:patientPhone IS NULL OR p.phone LIKE %:patientPhone%) " +
+           "AND (:requestingDoctorUserId IS NULL OR du.id = :requestingDoctorUserId)")
     Page<DoctorPatientRelationDTO> findRelationsWithDetailsByFilters(
             @Param("doctorName") String doctorName,
             @Param("doctorPhone") String doctorPhone,
             @Param("patientName") String patientName,
             @Param("patientPhone") String patientPhone,
-            @Param("requestingDoctorId") String requestingDoctorId,
+            @Param("requestingDoctorUserId") String requestingDoctorUserId,
             Pageable pageable);
     
     boolean existsByDoctorIdAndPatientId(String doctorId, String patientId);

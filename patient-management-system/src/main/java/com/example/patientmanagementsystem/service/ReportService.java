@@ -337,11 +337,12 @@ public class ReportService {
         return downloadInfo;
     }
 
-    public List<PatientReportDTO> getReportsForPatient(String patientId) {
-        if (!patientRepository.existsById(patientId)) {
-            throw new EntityNotFoundException("未找到指定的患者, ID: " + patientId);
+    public List<PatientReportDTO> getReportsForPatient(String patientUuid) {
+        // This method remains as is, expecting Patient's UUID
+        if (!patientRepository.existsById(patientUuid)) {
+            throw new EntityNotFoundException("未找到指定的患者, ID: " + patientUuid);
         }
-        List<PatientReport> reports = reportRepository.findByPatient_IdOrderByDateDesc(patientId);
+        List<PatientReport> reports = reportRepository.findByPatient_IdOrderByDateDesc(patientUuid);
         if (reports.isEmpty()) {
             return new ArrayList<>();
         }
@@ -362,6 +363,20 @@ public class ReportService {
             }
             return dto;
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * 获取指定用户关联的患者的报告列表。
+     * @param userId 患者的 User ID。
+     * @return 患者报告列表 (PatientReportDTO列表)。
+     * @throws EntityNotFoundException 如果未找到与userId关联的患者。
+     */
+    public List<PatientReportDTO> getReportsForPatientByUserId(String userId) {
+        Patient patient = patientRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new EntityNotFoundException("未找到与用户ID关联的患者记录: " + userId));
+        
+        // Now call the existing method that expects the Patient's UUID
+        return getReportsForPatient(patient.getId());
     }
 
     /**

@@ -224,6 +224,12 @@ public class AuthService {
             logger.error("用户注册失败: 手机号已被注册 {}", registerDTO.getPhone());
             throw new ResourceAlreadyExistsException("该手机号已被注册");
         }
+
+        // Added check for existing idNumber before creating User or Patient
+        if (patientRepository.existsByIdNumber(registerDTO.getIdNumber())) {
+            logger.error("用户注册失败: 身份证号码已被注册 {}", registerDTO.getIdNumber());
+            throw new ResourceAlreadyExistsException("该身份证号码已被注册");
+        }
         
         User user = new User();
         user.setName(registerDTO.getName());

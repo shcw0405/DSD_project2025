@@ -11,6 +11,7 @@ import com.example.patientmanagementsystem.repository.DoctorPatientRelationRepos
 import com.example.patientmanagementsystem.repository.PatientReportRepository;
 import com.example.patientmanagementsystem.repository.PatientRepository;
 import com.example.patientmanagementsystem.repository.UserRepository;
+import com.example.patientmanagementsystem.mapper.PatientMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,15 +43,18 @@ public class PatientService {
     private final PasswordEncoder passwordEncoder;
     private final DoctorPatientRelationRepository doctorPatientRelationRepository;
     private final PatientReportRepository patientReportRepository;
+    private final PatientMapper patientMapper;
 
     @Autowired
     public PatientService(PatientRepository patientRepository, UserRepository userRepository, PasswordEncoder passwordEncoder,
-                         DoctorPatientRelationRepository doctorPatientRelationRepository, PatientReportRepository patientReportRepository) {
+                         DoctorPatientRelationRepository doctorPatientRelationRepository, PatientReportRepository patientReportRepository,
+                         PatientMapper patientMapper) {
         this.patientRepository = patientRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.doctorPatientRelationRepository = doctorPatientRelationRepository;
         this.patientReportRepository = patientReportRepository;
+        this.patientMapper = patientMapper;
     }
 
     /**
@@ -78,7 +82,7 @@ public class PatientService {
             }
             
             if (genderStr != null && !genderStr.isEmpty()) {
-                Patient.Gender genderEnum = Patient.Gender.fromString(genderStr); // Use existing fromString
+                Patient.Gender genderEnum = Patient.Gender.fromString(genderStr);
                 if (genderEnum != null) {
                     predicates.add(criteriaBuilder.equal(root.get("gender"), genderEnum));
                 } else {
@@ -97,18 +101,7 @@ public class PatientService {
         
         Page<Patient> patientsPage = patientRepository.findAll(spec, pageable);
         
-        List<PatientDTO> patientsList = patientsPage.getContent().stream()
-                .map(patient -> new PatientDTO(
-                        patient.getId(),
-                        patient.getName(),
-                        patient.getPhone(),
-                        patient.getGender() != null ? patient.getGender().name() : null, // Use .name() for "男", "女"
-                        patient.getBirthDate(),
-                        patient.getIdNumber()
-                ))
-                .collect(Collectors.toList());
-        
-        return new PatientListResponseDTO(patientsList, patientsPage.getTotalElements());
+        return patientMapper.toListResponseDTO(patientsPage);
     }
 
     /**
@@ -118,22 +111,37 @@ public class PatientService {
      */
     public List<Map<String, Object>> searchPatients(String query) {
         List<Patient> patients;
-        
+        Pageable pageable = PageRequest.of(0, 50); // Limit to 50 results for dropdowns
+
         if (query == null || query.isEmpty()) {
-            // 如果没有搜索关键词，返回前50条记录
-            Pageable pageable = PageRequest.of(0, 50);
+            // If no query, fetch the first 50 patients
             patients = patientRepository.findAll(pageable).getContent();
         } else {
-            // 如果有搜索关键词，按姓名、电话、性别、身份证号搜索
+            // Search by name, phone, or ID number
+            // Ensure that the query fetches associated User objects if not already eager-loaded
+            // or handle patient.getUser() potentially being null if User is LAZY fetched.
             patients = patientRepository.findByNameContainingOrPhoneContainingOrIdNumberContaining(
-                    query, query, query, PageRequest.of(0, 50));
+                    query, query, query, pageable);
         }
         
         return patients.stream()
                 .map(patient -> {
                     Map<String, Object> patientMap = new HashMap<>();
-                    patientMap.put("id", patient.getId());
-                    patientMap.put("name", patient.getName());
+                    User user = patient.getUser();
+                    if (user != null) {
+                        patientMap.put("id", user.getId()); // Use User ID
+                        patientMap.put("name", user.getName()); // Prefer User.name for consistency
+                    } else {
+                        // Fallback if user is null, though this ideally shouldn't happen for registered patients
+                        // Or, if the search is intended to find patients not yet fully users (e.g. imported data)
+                        // For consistency, we might want to filter out patients without a user or handle this case as an error.
+                        // For now, providing patient table ID and name as a fallback if user is not available.
+                        patientMap.put("id", patient.getId()); // Patient UUID as fallback
+                        patientMap.put("name", patient.getName());
+                         // It might be better to log a warning here or ensure patients always have a linked user.
+                    }
+                    // Optionally, add other fields needed for the search display
+                    // patientMap.put("phone", patient.getPhone()); 
                     return patientMap;
                 })
                 .collect(Collectors.toList());
@@ -141,148 +149,150 @@ public class PatientService {
 
     /**
      * 更新患者信息
-     * @param id 患者ID
+     * @param userId 用户ID
      * @param dto 更新患者请求DTO
      */
     @Transactional
-    public void updatePatient(String id, UpdatePatientRequestDTO dto) {
-        Patient patient = patientRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("未找到该患者，ID: " + id));
+    public void updatePatient(String userId, UpdatePatientRequestDTO dto) {
+        // Find Patient by userId
+        Patient patient = patientRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new EntityNotFoundException("未找到与用户ID关联的患者记录, User ID: " + userId));
         
-        User user = null;
-        // Only fetch user if there are fields that need user table update, or if password is being updated
-        // And if patient is actually linked to a user.
-        if (patient.getUserId() != null && 
-            (dto.getName() != null || dto.getPhone() != null || dto.getGender() != null || 
-             dto.getBirthDate() != null || dto.getIdType() != null || dto.getIdNumber() != null || dto.getPassword() != null)) {
-            user = userRepository.findById(patient.getUserId())
-                    .orElseThrow(() -> new EntityNotFoundException("未找到患者关联的用户账户，用户ID: " + patient.getUserId()));
-        }
+        // User entity is already linked to the patient, or can be fetched via patient.getUser() or directly by userId
+        User user = userRepository.findById(userId) 
+                .orElseThrow(() -> new EntityNotFoundException("未找到用户账户，用户ID: " + userId));
 
         boolean patientChanged = false;
         boolean userChanged = false;
 
-        // Update Patient entity fields
-        if (dto.getName() != null && !dto.getName().equals(patient.getName())) {
-            patient.setName(dto.getName());
-            if (user != null) user.setName(dto.getName());
+        // Update Name (sync between User and Patient)
+        if (dto.getName() != null && !dto.getName().isEmpty() && !dto.getName().equals(user.getName())) {
+            user.setName(dto.getName());
+            patient.setName(dto.getName()); // Assuming Patient.name should mirror User.name
+            userChanged = true;
             patientChanged = true;
-            if (user != null) userChanged = true;
         }
         
-        if (dto.getPhone() != null && !dto.getPhone().equals(patient.getPhone())) {
-            // Phone uniqueness check (against other users)
+        // Update Phone (sync between User and Patient)
+        if (dto.getPhone() != null && !dto.getPhone().isEmpty() && !dto.getPhone().equals(user.getPhone())) {
             final String newPhone = dto.getPhone();
+            // Check phone uniqueness against other users
             userRepository.findByPhone(newPhone).ifPresent(existingUser -> {
-                if (!existingUser.getId().equals(patient.getUserId())) {
+                if (!existingUser.getId().equals(userId)) {
                     throw new ResourceAlreadyExistsException("电话号码 '" + newPhone + "' 已被其他用户注册");
                 }
             });
-            // Phone format validation is expected to be handled by DTO @Pattern
-            patient.setPhone(newPhone);
-            if (user != null) user.setPhone(newPhone);
+            user.setPhone(newPhone);
+            patient.setPhone(newPhone); // Assuming Patient.phone should mirror User.phone
+            userChanged = true;
             patientChanged = true;
-            if (user != null) userChanged = true;
         }
         
-        if (dto.getGender() != null) {
+        // Update Gender (sync between User and Patient if User has gender)
+        if (dto.getGender() != null && !dto.getGender().isEmpty()) {
             try {
-                Patient.Gender newGender = Patient.Gender.valueOf(dto.getGender());
-                if (!newGender.equals(patient.getGender())) {
+                Patient.Gender newGender = Patient.Gender.valueOf(dto.getGender().toUpperCase()); // toUpperCase for robustness
+                if (patient.getGender() == null || !newGender.equals(patient.getGender())) {
                     patient.setGender(newGender);
-                    if (user != null) user.setGender(dto.getGender()); // User.gender might be String
                     patientChanged = true;
-                    if (user != null) userChanged = true;
+                }
+                // If User entity has a gender field compatible with Patient.Gender.name() or similar string:
+                if (user.getGender() == null || !dto.getGender().equals(user.getGender())){
+                     user.setGender(dto.getGender()); // Assuming User.gender is String type e.g. "男", "女"
+                     userChanged = true;
                 }
             } catch (IllegalArgumentException e) {
-                throw new BusinessException("无效的性别参数: " + dto.getGender());
+                throw new BusinessException("无效的性别参数: " + dto.getGender() + ". 支持的值: " + java.util.Arrays.toString(Patient.Gender.values()));
             }
         }
         
-        if (dto.getBirthDate() != null) {
+        // Update BirthDate (sync between User and Patient if User has birthDate)
+        if (dto.getBirthDate() != null && !dto.getBirthDate().isEmpty()) {
             try {
                 LocalDate newBirthDate = LocalDate.parse(dto.getBirthDate(), DateTimeFormatter.ISO_DATE);
-                if (!newBirthDate.equals(patient.getBirthDate())) {
+                if (patient.getBirthDate() == null || !newBirthDate.equals(patient.getBirthDate())) {
                     patient.setBirthDate(newBirthDate);
-                    if (user != null) user.setBirthDate(dto.getBirthDate()); // User.birthDate might be String
                     patientChanged = true;
-                    if (user != null) userChanged = true;
+                }
+                // If User entity has a birthDate field compatible with this format:
+                if(user.getBirthDate() == null || !dto.getBirthDate().equals(user.getBirthDate())){
+                    user.setBirthDate(dto.getBirthDate()); // Assuming User.birthDate is String type and matches ISO_DATE
+                    userChanged = true;
                 }
             } catch (java.time.format.DateTimeParseException e) {
                 throw new BusinessException("出生日期格式不正确，期望格式: YYYY-MM-DD, 实际: " + dto.getBirthDate());
             }
         }
         
-        if (dto.getIdType() != null) {
+        // Update ID Type (Patient only)
+        if (dto.getIdType() != null && !dto.getIdType().isEmpty()) {
             try {
-                Patient.IdType newIdType = Patient.IdType.valueOf(dto.getIdType());
-                if (!newIdType.equals(patient.getIdType())) {
+                Patient.IdType newIdType = Patient.IdType.valueOf(dto.getIdType().toUpperCase());
+                if (patient.getIdType() == null || !newIdType.equals(patient.getIdType())) {
                     patient.setIdType(newIdType);
-                    if (user != null) user.setIdType(dto.getIdType()); // User.idType might be String
                     patientChanged = true;
-                    if (user != null) userChanged = true;
                 }
             } catch (IllegalArgumentException e) {
-                throw new BusinessException("无效的证件类型参数: " + dto.getIdType());
+                throw new BusinessException("无效的证件类型参数: " + dto.getIdType() + ". 支持的值: " + java.util.Arrays.toString(Patient.IdType.values()));
             }
         }
         
-        if (dto.getIdNumber() != null && !dto.getIdNumber().equals(patient.getIdNumber())) {
-            // ID Number uniqueness check (against other patients)
+        // Update ID Number (Patient only, but check uniqueness)
+        if (dto.getIdNumber() != null && !dto.getIdNumber().isEmpty() && !dto.getIdNumber().equals(patient.getIdNumber())) {
             final String newIdNumber = dto.getIdNumber();
+            // ID Number uniqueness check against other patients
             patientRepository.findByIdNumber(newIdNumber).ifPresent(existingPatient -> {
-                if (!existingPatient.getId().equals(id)) {
+                if (!existingPatient.getId().equals(patient.getId())) { // Compare with Patient's own UUID
                     throw new ResourceAlreadyExistsException("身份证号码 '" + newIdNumber + "' 已被其他患者注册");
                 }
             });
-            // ID Number format validation for 身份证 is expected to be handled by DTO or more specific logic if needed
-            // if (patient.getIdType() == Patient.IdType.身份证 && !newIdNumber.matches("^\\d{17}[0-9X]$")) {
-            //     throw new BusinessException("请求参数错误：身份证号格式不正确");
-            // }
             patient.setIdNumber(newIdNumber);
-            if (user != null) user.setIdNumber(newIdNumber);
             patientChanged = true;
-            if (user != null) userChanged = true;
+        }
+        
+        // Update Password (User only)
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+            userChanged = true;
         }
         
         if (patientChanged) {
             patientRepository.save(patient);
         }
-        
-        // Update User entity password if provided
-        if (user != null && dto.getPassword() != null && !dto.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(dto.getPassword()));
-            userChanged = true;
-        }
-        
-        if (user != null && userChanged) {
+        if (userChanged) {
             userRepository.save(user);
         }
     }
 
     /**
      * 删除患者
-     * @param id 患者ID
+     * @param userId 用户ID
      */
     @Transactional
-    public void deletePatient(String id) {
-        Patient patient = patientRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("未找到该患者，ID: " + id));
+    public void deletePatient(String userId) {
+        // 1. Find Patient entity by userId to get its UUID (patientUuid)
+        Patient patient = patientRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new EntityNotFoundException("未找到与用户ID关联的患者记录, User ID: " + userId));
         
-        String userId = patient.getUserId();
+        String patientUuid = patient.getId(); // This is the Patient table's primary key (UUID)
 
-        // 1. Delete related DoctorPatientRelations
-        doctorPatientRelationRepository.deleteAllById_PatientId(id);
+        // 2. Delete all doctor-patient relations for this patient (using patientUuid)
+        // DoctorPatientRelationId uses patientId, which is the patient's UUID
+        if (doctorPatientRelationRepository.existsById_PatientId(patientUuid)) {
+             doctorPatientRelationRepository.deleteAllById_PatientId(patientUuid);
+        }
 
-        // 2. Delete related PatientReports
-        patientReportRepository.deleteAllByPatient_Id(id);
+        // 3. Delete all reports for this patient (using patientUuid)
+        // PatientReport refers to Patient via patient.id (UUID)
+        patientReportRepository.deleteAllByPatient_Id(patientUuid);
         
-        // 3. Delete the Patient entity
+        // 4. Delete the Patient entity itself
         patientRepository.delete(patient);
         
-        // 4. Delete the associated User entity, if exists
-        if (userId != null) {
-            userRepository.findById(userId).ifPresent(userRepository::delete);
-        }
+        // 5. Delete the associated User entity
+        // This should be done after deleting entities that have a foreign key to User, 
+        // or if User has dependent entities that aren't Patient (though unlikely in this context for a patient user).
+        // Cascading could also handle this, but explicit deletion is clearer here.
+        userRepository.findById(userId).ifPresent(userRepository::delete);
     }
 }

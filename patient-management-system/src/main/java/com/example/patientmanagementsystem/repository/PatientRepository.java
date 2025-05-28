@@ -29,9 +29,9 @@ public interface PatientRepository extends JpaRepository<Patient, String>, JpaSp
     /**
      * 根据用户ID查询患者
      * @param userId 用户ID
-     * @return 患者信息
+     * @return 患者信息 (Optional)
      */
-    Patient findByUser_Id(String userId);
+    Optional<Patient> findByUser_Id(String userId);
     
     /**
      * 根据身份证号查询患者

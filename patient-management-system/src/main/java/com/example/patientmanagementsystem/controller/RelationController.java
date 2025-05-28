@@ -93,7 +93,7 @@ public class RelationController {
      * @return 更新结果，包含新关系的信息
      */
     @PutMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
     public ResponseEntity<ApiResponse<Map<String, Object>>> updateRelation(@Valid @RequestBody UpdateRelationRequestDTO requestDTO) {
         logger.info("PUT /admin/relations invoked with DTO: {}", requestDTO);
         try {
@@ -107,17 +107,22 @@ public class RelationController {
 
     /**
      * 删除医患关系
-     * @param doctorId 医生ID (Path Variable)
-     * @param patientId 患者ID (Path Variable)
+     * @param doctorUserId 医生ID (Path Variable)
+     * @param patientUserId 患者ID (Path Variable)
      * @return 删除结果
      */
-    @DeleteMapping("/{doctorId}/{patientId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{doctorUserId}/{patientUserId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
     public ResponseEntity<ApiResponse<Void>> deleteRelation(
-            @PathVariable String doctorId,
-            @PathVariable String patientId) {
-        
-        relationService.deleteRelation(doctorId, patientId);
-        return ResponseEntity.ok(ApiResponse.deleted("医患关系删除成功"));
+            @PathVariable String doctorUserId,
+            @PathVariable String patientUserId) {
+        logger.info("DELETE /admin/relations/{}/{} invoked", doctorUserId, patientUserId);
+        try {
+            relationService.deleteRelation(doctorUserId, patientUserId);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.deleted("医患关系删除成功"));
+        } catch (Exception e) {
+            logger.error("Error in deleteRelation for doctorUserId={}, patientUserId={}: ", doctorUserId, patientUserId, e);
+            throw e;
+        }
     }
 }

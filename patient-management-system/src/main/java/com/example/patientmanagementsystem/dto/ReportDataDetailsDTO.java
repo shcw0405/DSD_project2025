@@ -18,6 +18,6 @@ public class ReportDataDetailsDTO {
     @JsonProperty("运动幅度")
     private List<Double> motionAmplitude;
 
-    @JsonProperty("差异")
+    @JsonProperty("差值")
     private List<Double> difference;
 } 

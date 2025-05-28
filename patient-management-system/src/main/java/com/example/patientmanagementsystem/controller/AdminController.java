@@ -80,13 +80,13 @@ public class AdminController {
 
     /**
      * 更新医生信息
-     * @param id 医生ID (Path Variable)
+     * @param userId 医生ID (Path Variable)
      * @param requestDTO 更新的医生信息 (Request Body)
      * @return 更新结果
      */
-    @PutMapping("/doctors/{id}")
+    @PutMapping("/doctors/{userId}")
     public ResponseEntity<ApiResponse<Void>> updateDoctor(
-            @PathVariable String id,
+            @PathVariable String userId,
             @Valid @RequestBody UpdateDoctorRequestDTO requestDTO) {
         
         // The check for at least one field is implicitly handled: 
@@ -95,7 +95,7 @@ public class AdminController {
         // Validation annotations on DTO will handle format errors if fields are provided but incorrect.
 
         doctorService.updateDoctor(
-            id, 
+            userId,
             requestDTO.getName(), 
             requestDTO.getPhone(), 
             requestDTO.getHospital(), 
@@ -107,12 +107,12 @@ public class AdminController {
 
     /**
      * 删除医生
-     * @param id 医生ID
+     * @param userId 医生ID
      * @return 删除结果
      */
-    @DeleteMapping("/doctors/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteDoctor(@PathVariable String id) {
-        doctorService.deleteDoctor(id);
+    @DeleteMapping("/doctors/{userId}")
+    public ResponseEntity<ApiResponse<Void>> deleteDoctor(@PathVariable String userId) {
+        doctorService.deleteDoctor(userId);
         return ResponseEntity.ok(ApiResponse.deleted("医生删除成功"));
     }
 

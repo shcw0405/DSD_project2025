@@ -19,11 +19,15 @@ public class PatientMapper {
             return null;
         }
         PatientDTO dto = new PatientDTO();
-        dto.setId(patient.getId());
         User user = patient.getUser();
         if (user != null) {
+            dto.setId(user.getId());
             dto.setName(user.getName());
             dto.setPhone(user.getPhone());
+        } else {
+            dto.setId(patient.getId());
+            dto.setName(patient.getName());
+            dto.setPhone(patient.getPhone());
         }
         dto.setGender(patient.getGender() != null ? patient.getGender().name() : null);
         dto.setBirthDate(patient.getBirthDate());

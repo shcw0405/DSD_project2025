@@ -87,7 +87,7 @@ public class DoctorService {
         
         List<DoctorDTO> doctorsList = doctorsPage.getContent().stream()
                 .map(doctor -> new DoctorDTO(
-                        doctor.getId(), 
+                        doctor.getUserId(),
                         doctor.getName(), 
                         doctor.getPhone(), 
                         doctor.getHospital(), 
@@ -151,7 +151,7 @@ public class DoctorService {
 
     /**
      * 更新医生信息
-     * @param doctorId 医生的ID (来自 Doctor 表)
+     * @param userId 医生的ID (来自 Doctor 表)
      * @param name 新姓名
      * @param phone 新电话
      * @param hospital 新医院
@@ -159,18 +159,21 @@ public class DoctorService {
      * @param password 新密码 (明文)
      */
     @Transactional
-    public void updateDoctor(String doctorId, String name, String phone, String hospital, String department, String password) {
-        Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new EntityNotFoundException("未找到该医生，ID: " + doctorId));
+    public void updateDoctor(String userId, String name, String phone, String hospital, String department, String password) {
+        // Find Doctor by userId
+        Doctor doctor = doctorRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new EntityNotFoundException("未找到与用户ID关联的医生记录, User ID: " + userId));
         
-        User user = userRepository.findById(doctor.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("未找到关联用户，用户ID: " + doctor.getUserId()));
+        // The User entity is already fetched implicitly if using doctor.getUser(), 
+        // but it's better to fetch it explicitly if we need to check its existence or save it separately.
+        User user = userRepository.findById(userId) // Assuming doctor.getUserId() is indeed the same as the passed userId
+                .orElseThrow(() -> new EntityNotFoundException("未找到关联用户，用户ID: " + userId));
 
         boolean doctorChanged = false;
         boolean userChanged = false;
 
         if (name != null && !name.isEmpty() && !name.equals(user.getName())) {
-            doctor.setName(name);
+            doctor.setName(name); // Keep Doctor.name in sync with User.name if it exists
             user.setName(name);  
             doctorChanged = true;
             userChanged = true;
@@ -180,11 +183,12 @@ public class DoctorService {
             // 检查新电话号码是否已被其他用户占用
             if (userRepository.existsByPhone(phone)) {
                 User existingUserWithPhone = userRepository.findByPhone(phone).orElse(null);
-                if (existingUserWithPhone != null && !existingUserWithPhone.getId().equals(user.getId())) {
+                // Ensure the found user is not the current user we are updating
+                if (existingUserWithPhone != null && !existingUserWithPhone.getId().equals(userId)) {
                     throw new ResourceAlreadyExistsException("电话号码 '" + phone + "' 已被其他用户注册");
                 }
             }
-            doctor.setPhone(phone);
+            doctor.setPhone(phone); // Keep Doctor.phone in sync if it exists
             user.setPhone(phone);   
             doctorChanged = true;
             userChanged = true;
@@ -201,6 +205,9 @@ public class DoctorService {
         }
 
         if (password != null && !password.isEmpty()) {
+            // Avoid re-encoding if password hasn't changed or is empty after trim
+            // This requires checking against the stored hash, which is complex.
+            // Simpler: always re-encode if a non-empty password string is provided.
             user.setPassword(passwordEncoder.encode(password));
             userChanged = true;
         }
@@ -215,23 +222,27 @@ public class DoctorService {
 
     /**
      * 删除医生
-     * @param id 医生ID
+     * @param userId 医生ID
      */
     @Transactional
-    public void deleteDoctor(String id) {
-        Doctor doctor = doctorRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("未找到该医生，ID: " + id));
+    public void deleteDoctor(String userId) {
+        // Find Doctor by userId to get its UUID for deleting relations
+        Doctor doctor = doctorRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new EntityNotFoundException("未找到与用户ID关联的医生记录, User ID: " + userId));
         
-        String userId = doctor.getUserId();
+        String doctorUuid = doctor.getId(); // This is the Doctor table's primary key (UUID)
 
-        // 1. Delete doctor-patient relations
-        doctorPatientRelationRepository.deleteAllById_DoctorId(id);
+        // 1. Delete doctor-patient relations using the Doctor's UUID
+        doctorPatientRelationRepository.deleteAllById_DoctorId(doctorUuid);
         
-        // 2. Delete the doctor
+        // 2. Delete the doctor entity itself
         doctorRepository.delete(doctor);
         
-        // 3. Delete the associated user
+        // 3. Delete the associated user entity (this will cascade or should be handled if relations exist)
+        // It's crucial that the user entity is deleted *after* dependent entities like Doctor,
+        // or that cascading delete is correctly configured.
         userRepository.findById(userId).ifPresent(userRepository::delete);
+        // If there are other direct relations to User that aren't cascaded from Doctor, they might need explicit handling.
     }
 
     /**
@@ -255,7 +266,7 @@ public class DoctorService {
         return doctors.stream()
                 .map(doctor -> {
                     Map<String, Object> doctorMap = new HashMap<>();
-                    doctorMap.put("id", doctor.getId());
+                    doctorMap.put("id", doctor.getUserId());
                     doctorMap.put("name", doctor.getName());
                     return doctorMap;
                 })

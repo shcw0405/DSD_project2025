@@ -1,7 +1,10 @@
 package com.example.patientmanagementsystem.security;
 
+import com.example.patientmanagementsystem.model.Doctor;
+import com.example.patientmanagementsystem.model.Patient;
 import com.example.patientmanagementsystem.model.User;
 import com.example.patientmanagementsystem.repository.DoctorPatientRelationRepository;
+import com.example.patientmanagementsystem.repository.DoctorRepository;
 import com.example.patientmanagementsystem.repository.PatientRepository;
 import com.example.patientmanagementsystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service("patientSecurityService")
@@ -25,7 +29,10 @@ public class PatientSecurityService {
     @Autowired
     private DoctorPatientRelationRepository doctorPatientRelationRepository;
 
-    public boolean canAccessPatientData(String patientId) {
+    @Autowired
+    private DoctorRepository doctorRepository;
+
+    public boolean canAccessPatientData(String userIdFromPath) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
@@ -55,19 +62,27 @@ public class PatientSecurityService {
             return true;
         }
 
-        // 2. Check if Patient self
-        // We need to get the User ID associated with the patientId
-        com.example.patientmanagementsystem.model.Patient patient = patientRepository.findById(patientId).orElse(null);
-        if (patient != null && patient.getUser() != null && patient.getUser().getId().equals(currentUser.getId())) {
+        // 2. Check if Patient self (userIdFromPath is the User ID of the patient whose data is being accessed)
+        if (currentUser.getId().equals(userIdFromPath)) {
             return true;
         }
         
         // 3. Check if current user is a doctor related to this patient
-        // currentUser.getId() is the doctor's user ID (which is also their doctor ID in Doctor table)
-        if (currentUser.isDoctor() && patient != null) {
-             if (doctorPatientRelationRepository.existsByDoctorIdAndPatientId(currentUser.getId(), patientId)){
-                 return true;
-             }
+        if (currentUser.isDoctor()) {
+            // Find the Doctor entity linked to the current (doctor) User
+            Optional<Doctor> currentDoctorOpt = doctorRepository.findByUser_Id(currentUser.getId());
+            if (currentDoctorOpt.isPresent()) {
+                String actualDoctorUuid = currentDoctorOpt.get().getId(); // This is the Doctor table's primary key (UUID)
+
+                // Find the Patient entity linked to the userIdFromPath (User ID of the patient)
+                Optional<Patient> patientOpt = patientRepository.findByUser_Id(userIdFromPath);
+                if (patientOpt.isPresent()) {
+                    String actualPatientUuid = patientOpt.get().getId(); // This is the Patient table's primary key (UUID)
+                    if (doctorPatientRelationRepository.existsByDoctorIdAndPatientId(actualDoctorUuid, actualPatientUuid)) {
+                        return true;
+                    }
+                }
+            }
         }
 
         return false;

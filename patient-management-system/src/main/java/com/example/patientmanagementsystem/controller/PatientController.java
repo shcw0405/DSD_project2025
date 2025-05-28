@@ -65,35 +65,35 @@ public class PatientController {
     /**
      * 更新患者信息 - 管理员接口
      */
-    @PutMapping("/admin/patients/{id}")
+    @PutMapping("/admin/patients/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> updatePatient(
-            @PathVariable String id,
+            @PathVariable String userId,
             @Valid @RequestBody UpdatePatientRequestDTO requestDTO) {
         
-        patientService.updatePatient(id, requestDTO);
+        patientService.updatePatient(userId, requestDTO);
         return ResponseEntity.ok(ApiResponse.success("患者信息更新成功"));
     }
 
     /**
      * 删除患者 - 管理员接口
      */
-    @DeleteMapping("/admin/patients/{id}")
+    @DeleteMapping("/admin/patients/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> deletePatient(@PathVariable String id) {
-        patientService.deletePatient(id);
+    public ResponseEntity<ApiResponse<Void>> deletePatient(@PathVariable String userId) {
+        patientService.deletePatient(userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.deleted("患者删除成功"));
     }
 
     /**
      * 获取某位患者的步态评估报告列表
-     * 接口路径: /patients/{patientId}/reports
+     * 接口路径: /api/patient/{userId}/reports  (Singular 'patient', path param is User ID)
      */
-    @GetMapping("/patients/{patientId}/reports")
-    @PreAuthorize("@patientSecurityService.canAccessPatientData(#patientId)")
+    @GetMapping("/patient/{userId}/reports")
+    @PreAuthorize("@patientSecurityService.canAccessPatientData(#userId)")
     public ResponseEntity<ApiResponse<List<PatientReportDTO>>> getPatientReports(
-            @PathVariable String patientId) {
-        List<PatientReportDTO> reports = reportService.getReportsForPatient(patientId);
-        return ResponseEntity.ok(ApiResponse.success(reports, "获取患者报告列表成功"));
+            @PathVariable String userId) {
+        List<PatientReportDTO> reports = reportService.getReportsForPatientByUserId(userId);
+        return ResponseEntity.ok(ApiResponse.success(reports, "查询成功"));
     }
 }
