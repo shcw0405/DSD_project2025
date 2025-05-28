@@ -14,7 +14,7 @@ public class DoctorSecurityService {
     @Autowired
     private UserRepository userRepository;
 
-    public boolean isDoctorSelf(String doctorId) {
+    public boolean isDoctorSelf(String userIdFromPath) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
@@ -32,11 +32,10 @@ public class DoctorSecurityService {
         }
 
         User currentUser = userRepository.findByPhone(currentUsername).orElse(null);
-        if (currentUser == null) {
+        if (currentUser == null || !currentUser.isDoctor()) {
             return false;
         }
-        // 假设 Doctor 的 User ID 就是 Doctor 实体自身的 ID，或者 Doctor 有一个 userId 字段关联到 User 表
-        // 这里我们先假设 doctorId 就是 User 表的 ID
-        return currentUser.getId().equals(doctorId);
+
+        return currentUser.getId().equals(userIdFromPath);
     }
 } 

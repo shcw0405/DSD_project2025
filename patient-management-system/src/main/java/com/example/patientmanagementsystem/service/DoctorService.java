@@ -264,7 +264,7 @@ public class DoctorService {
 
     /**
      * 获取某位医生的患者列表 (分页与搜索)
-     * @param doctorId 医生ID
+     * @param userIdOfDoctor User ID of the Doctor
      * @param page 页码
      * @param pageSize 每页数量
      * @param name 患者姓名
@@ -273,23 +273,30 @@ public class DoctorService {
      * @param idNumber 患者身份证号
      * @return PatientListResponseDTO 包含患者列表和总数
      */
-    public PatientListResponseDTO getPatientsForDoctor(String doctorId, int page, int pageSize, String name, String phone, String gender, String idNumber) {
-        // 1. 校验医生是否存在
-        doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new EntityNotFoundException("未找到指定的医生, ID: " + doctorId));
+    public PatientListResponseDTO getPatientsForDoctor(String userIdOfDoctor, int page, int pageSize, String name, String phone, String gender, String idNumber) {
+        // 1. Find the Doctor entity using the userIdOfDoctor
+        Doctor doctor = doctorRepository.findByUser_Id(userIdOfDoctor)
+                .orElseThrow(() -> new EntityNotFoundException("未找到与用户ID关联的医生记录, User ID: " + userIdOfDoctor));
+        
+        String actualDoctorId = doctor.getId(); // This is the Doctor table's ID
 
-        // 2. 转换 gender 字符串为 Patient.Gender 枚举
+        // 2. Convert gender string to Patient.Gender enum
         Patient.Gender genderEnum = Patient.Gender.fromString(gender);
 
-        // 3. 构建分页请求 (JPA Page页码从0开始)
+        // 3. Build Pageable request (JPA Page index starts from 0)
         Pageable pageable = PageRequest.of(page - 1, pageSize);
 
-        // 4. 调用 DoctorPatientRelationRepository 中的方法获取患者分页数据
+        // 4. Call DoctorPatientRelationRepository method with the actualDoctorId
         Page<Patient> patientPage = doctorPatientRelationRepository.findPatientsByDoctorIdAndFilters(
-                doctorId, name, phone, genderEnum, idNumber, pageable
+                actualDoctorId, // Use the fetched Doctor ID
+                name, 
+                phone, 
+                genderEnum, 
+                idNumber, 
+                pageable
         );
 
-        // 5. 使用 PatientMapper 转换为 DTO
+        // 5. Use PatientMapper to convert to DTO
         return patientMapper.toListResponseDTO(patientPage);
     }
 }

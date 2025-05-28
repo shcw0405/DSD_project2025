@@ -1,12 +1,15 @@
 package com.example.patientmanagementsystem.controller;
 
 import com.example.patientmanagementsystem.dto.ApiResponse;
+import com.example.patientmanagementsystem.dto.PatientDTO;
 import com.example.patientmanagementsystem.dto.PatientListResponseDTO;
 import com.example.patientmanagementsystem.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/doctors") // 统一使用复数形式
@@ -21,12 +24,12 @@ public class DoctorController {
 
     /**
      * 获取某位医生的患者列表 (分页与搜索)
-     * 接口路径: /api/doctors/{doctorId}/patients
+     * 接口路径: /api/doctors/{userIdOfDoctor}/patients (Note: doctorId in path is now treated as User ID of the doctor)
      */
-    @GetMapping("/{doctorId}/patients")
-    @PreAuthorize("hasRole('ADMIN') or @doctorSecurityService.isDoctorSelf(#doctorId)")
-    public ResponseEntity<ApiResponse<PatientListResponseDTO>> getPatientsForDoctor(
-            @PathVariable String doctorId,
+    @GetMapping("/{userIdOfDoctor}/patients") // Path variable name changed
+    @PreAuthorize("hasRole('ADMIN') or @doctorSecurityService.isDoctorSelf(#userIdOfDoctor)") // References updated path variable
+    public ResponseEntity<ApiResponse<List<PatientDTO>>> getPatientsForDoctor(
+            @PathVariable String userIdOfDoctor, // Parameter name changed
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int pageSize,
             @RequestParam(required = false) String name,
@@ -34,7 +37,7 @@ public class DoctorController {
             @RequestParam(required = false) String gender,
             @RequestParam(required = false) String idNumber) {
 
-        PatientListResponseDTO result = doctorService.getPatientsForDoctor(doctorId, page, pageSize, name, phone, gender, idNumber);
-        return ResponseEntity.ok(ApiResponse.success(result, "获取医生关联患者列表成功"));
+        PatientListResponseDTO result = doctorService.getPatientsForDoctor(userIdOfDoctor, page, pageSize, name, phone, gender, idNumber);
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getTotal(), "获取医生关联患者列表成功"));
     }
 }
