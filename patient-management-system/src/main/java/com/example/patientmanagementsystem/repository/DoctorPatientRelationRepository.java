@@ -3,6 +3,7 @@ package com.example.patientmanagementsystem.repository;
 import com.example.patientmanagementsystem.model.DoctorPatientRelation;
 import com.example.patientmanagementsystem.model.DoctorPatientRelation.DoctorPatientRelationId;
 import com.example.patientmanagementsystem.model.Patient;
+import com.example.patientmanagementsystem.dto.DoctorPatientRelationDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -41,16 +42,18 @@ public interface DoctorPatientRelationRepository extends JpaRepository<DoctorPat
     
     @Query("SELECT new com.example.patientmanagementsystem.dto.DoctorPatientRelationDTO(" +
            "r.doctor.id, r.doctor.name, r.patient.id, r.patient.name) " +
-           "FROM DoctorPatientRelation r " +
-           "WHERE (:doctorName IS NULL OR r.doctor.name LIKE %:doctorName%) " +
-           "AND (:doctorPhone IS NULL OR r.doctor.phone LIKE %:doctorPhone%) " +
+           "FROM DoctorPatientRelation r JOIN r.doctor d JOIN d.user du " +
+           "WHERE (:doctorName IS NULL OR d.name LIKE %:doctorName%) " +
+           "AND (:doctorPhone IS NULL OR d.phone LIKE %:doctorPhone%) " +
            "AND (:patientName IS NULL OR r.patient.name LIKE %:patientName%) " +
-           "AND (:patientPhone IS NULL OR r.patient.phone LIKE %:patientPhone%)")
-    Page<Object[]> findRelationsWithDetailsByFilters(
+           "AND (:patientPhone IS NULL OR r.patient.phone LIKE %:patientPhone%) " +
+           "AND (:requestingDoctorId IS NULL OR d.id = :requestingDoctorId)")
+    Page<DoctorPatientRelationDTO> findRelationsWithDetailsByFilters(
             @Param("doctorName") String doctorName,
             @Param("doctorPhone") String doctorPhone,
             @Param("patientName") String patientName,
             @Param("patientPhone") String patientPhone,
+            @Param("requestingDoctorId") String requestingDoctorId,
             Pageable pageable);
     
     boolean existsByDoctorIdAndPatientId(String doctorId, String patientId);

@@ -9,15 +9,22 @@ import com.example.patientmanagementsystem.exception.ResourceAlreadyExistsExcept
 import com.example.patientmanagementsystem.model.Doctor;
 import com.example.patientmanagementsystem.model.DoctorPatientRelation;
 import com.example.patientmanagementsystem.model.Patient;
+import com.example.patientmanagementsystem.model.User;
 import com.example.patientmanagementsystem.repository.DoctorPatientRelationRepository;
 import com.example.patientmanagementsystem.repository.DoctorRepository;
 import com.example.patientmanagementsystem.repository.PatientRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +44,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class RelationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(RelationService.class);
 
     private final DoctorPatientRelationRepository relationRepository;
     private final DoctorRepository doctorRepository;
@@ -64,55 +73,133 @@ public class RelationService {
     public RelationListResponseDTO getRelations(int page, int pageSize, String doctorName, String doctorPhone,
                                           String patientName, String patientPhone) {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
+        String currentDoctorId = null;
 
-        // The repository method findRelationsWithDetailsByFilters returns Page<Object[]>
-        // where Object[] elements are in the order: doctorId, doctorName, patientId, patientName
-        Page<Object[]> relationsPage = relationRepository.findRelationsWithDetailsByFilters(
-                doctorName, doctorPhone, patientName, patientPhone, pageable);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            String username = null;
+            if (principal instanceof UserDetails) {
+                username = ((UserDetails) principal).getUsername();
+            }
 
-        List<DoctorPatientRelationDTO> dtoList = relationsPage.getContent().stream()
-                .map(objArray -> new DoctorPatientRelationDTO(
-                        (String) objArray[0], // doctorId
-                        (String) objArray[1], // doctorName
-                        (String) objArray[2], // patientId
-                        (String) objArray[3]  // patientName
-                ))
-                .collect(Collectors.toList());
+            boolean isDoctor = authentication.getAuthorities().stream()
+                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_DOCTOR"));
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        return new RelationListResponseDTO(dtoList, relationsPage.getTotalElements());
+            if (isDoctor && !isAdmin && username != null) { 
+                User currentUser = doctorRepository.findUserByDoctorPhone(username); 
+                if (currentUser != null) {
+                    com.example.patientmanagementsystem.model.Doctor doctor = doctorRepository.findByUser_Id(currentUser.getId()).orElse(null);
+                     if (doctor != null) {
+                        currentDoctorId = doctor.getId();
+                    }
+                }
+            }
+        }
+
+        Page<DoctorPatientRelationDTO> relationsPage = relationRepository.findRelationsWithDetailsByFilters(
+                doctorName, doctorPhone, patientName, patientPhone, currentDoctorId, pageable);
+
+        return new RelationListResponseDTO(relationsPage.getContent(), relationsPage.getTotalElements());
     }
 
     /**
      * 添加医患关系
-     * @param doctorId 医生ID
+     * @param doctorIdFromRequest 医生ID
      * @param patientId 患者ID
      * @return 添加的医患关系
      */
     @Transactional
-    public Map<String, Object> addRelation(String doctorId, String patientId) {
-        // 检查医生是否存在
-        Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new BusinessException("请求参数错误：医生 ID '" + doctorId + "' 不存在"));
+    public Map<String, Object> addRelation(String doctorIdFromRequest, String patientId) {
+        logger.info("Attempting to add relation. Requested doctorId: {}, patientId: {}", doctorIdFromRequest, patientId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String determinedDoctorId = null;
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            String username = null;
+            if (principal instanceof UserDetails) {
+                username = ((UserDetails) principal).getUsername();
+            }
+            logger.info("Authenticated username: {}", username);
+
+            boolean isDoctor = authentication.getAuthorities().stream()
+                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_DOCTOR"));
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+            logger.info("User roles: isDoctor={}, isAdmin={}", isDoctor, isAdmin);
+
+            if (isDoctor && !isAdmin && username != null) {
+                User currentUser = doctorRepository.findUserByDoctorPhone(username);
+                logger.info("User found by phone ({}): {}", username, currentUser != null ? currentUser.getId() : "null");
+                if (currentUser != null) {
+                    com.example.patientmanagementsystem.model.Doctor doctorEntity = doctorRepository.findByUser_Id(currentUser.getId()).orElse(null);
+                    logger.info("Doctor entity found by userId ({}): {}", currentUser.getId(), doctorEntity != null ? doctorEntity.getId() : "null");
+                    if (doctorEntity != null) {
+                        determinedDoctorId = doctorEntity.getId();
+                        logger.info("Determined doctorId for current doctor: {}", determinedDoctorId);
+                        if (!doctorIdFromRequest.equals(determinedDoctorId)) {
+                            logger.error("Access Denied: doctorIdFromRequest ({}) does not match determinedDoctorId ({}).", doctorIdFromRequest, determinedDoctorId);
+                            throw new AccessDeniedException(
+                                String.format("权限不足：您只能添加与自己账户相关的医患关系。Requested: %s, Determined: %s",
+                                              doctorIdFromRequest, determinedDoctorId)
+                            );
+                        }
+                    } else {
+                         logger.error("Access Denied: Doctor entity not found for userId: {}", currentUser.getId());
+                        throw new AccessDeniedException("权限不足：无法验证您的医生实体信息。");
+                    }
+                } else {
+                    logger.error("Access Denied: User not found by phone: {}", username);
+                    throw new AccessDeniedException("权限不足：无法验证您的医生身份。");
+                }
+            } else if (isAdmin) {
+                determinedDoctorId = doctorIdFromRequest;
+                logger.info("Admin request. Using doctorIdFromRequest: {}", determinedDoctorId);
+            } else {
+                logger.error("Access Denied: User is not a recognized doctor or admin, or username is null.");
+                throw new AccessDeniedException("权限不足：无法执行此操作。");
+            }
+        } else {
+            logger.error("Access Denied: User not authenticated.");
+            throw new AccessDeniedException("用户未认证。");
+        }
         
-        // 检查患者是否存在
+        final String finalDoctorIdToUse = determinedDoctorId;
+        logger.info("Final doctorId to use for operation: {}", finalDoctorIdToUse);
+        if (finalDoctorIdToUse == null) {
+            logger.error("Operation Aborted: finalDoctorIdToUse is null.");
+            throw new BusinessException("请求参数错误：未能确定有效的医生ID进行操作。");
+        }
+
+        Doctor doctor = doctorRepository.findById(finalDoctorIdToUse)
+                .orElseThrow(() -> {
+                    logger.error("Doctor not found in repository with ID: {}", finalDoctorIdToUse);
+                    return new BusinessException("请求参数错误：医生 ID '" + finalDoctorIdToUse + "' 不存在");
+                });
+        
         Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new BusinessException("请求参数错误：患者 ID '" + patientId + "' 不存在"));
+                .orElseThrow(() -> {
+                     logger.error("Patient not found in repository with ID: {}", patientId);
+                    return new BusinessException("请求参数错误：患者 ID '" + patientId + "' 不存在");
+                });
         
-        // 检查关系是否已存在
-        if (relationRepository.existsByDoctorIdAndPatientId(doctorId, patientId)) {
+        if (relationRepository.existsByDoctorIdAndPatientId(finalDoctorIdToUse, patientId)) {
+            logger.warn("Relation already exists for doctorId: {} and patientId: {}", finalDoctorIdToUse, patientId);
             throw new ResourceAlreadyExistsException("该医患关系已存在");
         }
         
-        // 创建新关系
         DoctorPatientRelation relation = new DoctorPatientRelation();
-        DoctorPatientRelation.DoctorPatientRelationId relationId = new DoctorPatientRelation.DoctorPatientRelationId(doctorId, patientId);
+        DoctorPatientRelation.DoctorPatientRelationId relationId = new DoctorPatientRelation.DoctorPatientRelationId(finalDoctorIdToUse, patientId);
         relation.setId(relationId);
         relation.setDoctor(doctor);
         relation.setPatient(patient);
         
         relationRepository.save(relation);
+        logger.info("Successfully added relation for doctorId: {} and patientId: {}", finalDoctorIdToUse, patientId);
         
-        // 构建返回结果
         Map<String, Object> result = new HashMap<>();
         result.put("doctorId", doctor.getId());
         result.put("patientId", patient.getId());
@@ -294,13 +381,14 @@ public class RelationService {
      * @return 患者DTO
      */
     private PatientDTO convertToDTO(Patient patient) {
-        PatientDTO dto = new PatientDTO();
-        dto.setId(patient.getId());
-        dto.setName(patient.getName());
-        dto.setPhone(patient.getPhone());
-        dto.setGender(patient.getGender().toString());
-        dto.setBirthDate(patient.getBirthDate());
-        dto.setIdNumber(patient.getIdNumber());
-        return dto;
+        if (patient == null) return null;
+        return new PatientDTO(
+                patient.getId(),
+                patient.getName(),
+                patient.getPhone(),
+                patient.getGender() != null ? patient.getGender().name() : null,
+                patient.getBirthDate(),
+                patient.getIdNumber()
+        );
     }
 }

@@ -1,12 +1,16 @@
 package com.example.patientmanagementsystem.repository;
 
 import com.example.patientmanagementsystem.model.Doctor;
+import com.example.patientmanagementsystem.model.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 医生数据访问接口
@@ -27,16 +31,15 @@ public interface DoctorRepository extends JpaRepository<Doctor, String>, JpaSpec
             String name, String phone, String hospital, String department, Pageable pageable);
     
     /**
-     * 根据用户ID查询医生
-     * @param userId 用户ID
-     * @return 医生信息
-     */
-    Doctor findByUser_Id(String userId);
-    
-    /**
      * 检查指定手机号的医生是否存在
      * @param phone 手机号
      * @return 是否存在
      */
     boolean existsByPhone(String phone);
+
+    Optional<Doctor> findByPhone(String phone);
+    Optional<Doctor> findByUser_Id(String userId);
+
+    @Query("SELECT d.user FROM Doctor d WHERE d.user.phone = :phone")
+    User findUserByDoctorPhone(@Param("phone") String phone);
 }

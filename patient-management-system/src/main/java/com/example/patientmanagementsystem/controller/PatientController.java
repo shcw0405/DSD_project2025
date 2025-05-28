@@ -8,6 +8,7 @@ import com.example.patientmanagementsystem.dto.UpdatePatientRequestDTO;
 import com.example.patientmanagementsystem.service.PatientService;
 import com.example.patientmanagementsystem.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +54,7 @@ public class PatientController {
      * 搜索患者（用于下拉选择）- 管理员接口
      */
     @GetMapping("/admin/patients/search")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
     public ResponseEntity<ApiResponse<List<Map<String, Object>>>> searchPatients(
             @RequestParam(required = false, defaultValue = "") String query) {
         
@@ -81,7 +82,7 @@ public class PatientController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deletePatient(@PathVariable String id) {
         patientService.deletePatient(id);
-        return ResponseEntity.ok(ApiResponse.deleted("患者删除成功"));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.deleted("患者删除成功"));
     }
 
     /**

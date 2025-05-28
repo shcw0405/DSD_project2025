@@ -2,15 +2,20 @@ package com.example.patientmanagementsystem.controller;
 
 import com.example.patientmanagementsystem.dto.AddRelationRequestDTO;
 import com.example.patientmanagementsystem.dto.ApiResponse;
+import com.example.patientmanagementsystem.dto.DoctorPatientRelationDTO;
 import com.example.patientmanagementsystem.dto.RelationListResponseDTO;
 import com.example.patientmanagementsystem.dto.UpdateRelationRequestDTO;
 import com.example.patientmanagementsystem.service.RelationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,9 +24,9 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/admin/relations")
-@PreAuthorize("hasRole('ADMIN')")
 public class RelationController {
 
+    private static final Logger logger = LoggerFactory.getLogger(RelationController.class);
     private final RelationService relationService;
 
     @Autowired
@@ -40,16 +45,23 @@ public class RelationController {
      * @return 医患关系列表和总数
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<RelationListResponseDTO>> getRelations(
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
+    public ResponseEntity<ApiResponse<List<DoctorPatientRelationDTO>>> getRelations(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "20") int pageSize,
+            @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String doctorName,
             @RequestParam(required = false) String doctorPhone,
             @RequestParam(required = false) String patientName,
             @RequestParam(required = false) String patientPhone) {
-        
-        RelationListResponseDTO result = relationService.getRelations(page, pageSize, doctorName, doctorPhone, patientName, patientPhone);
-        return ResponseEntity.ok(ApiResponse.success(result, "获取医患关系列表成功"));
+        logger.info("GET /admin/relations called with page: {}, pageSize: {}, doctorName: {}, doctorPhone: {}, patientName: {}, patientPhone: {}",
+                page, pageSize, doctorName, doctorPhone, patientName, patientPhone);
+        try {
+            RelationListResponseDTO result = relationService.getRelations(page, pageSize, doctorName, doctorPhone, patientName, patientPhone);
+            return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getTotal(), "获取医患关系列表成功"));
+        } catch (Exception e) {
+            logger.error("Error in getRelations: ", e);
+            throw e; // Re-throw to be handled by GlobalExceptionHandler or Spring
+        }
     }
 
     /**
@@ -58,12 +70,21 @@ public class RelationController {
      * @return 添加结果
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<Map<String, Object>>> addRelation(
-            @Valid @RequestBody AddRelationRequestDTO requestDTO) {
-        
-        Map<String, Object> relation = relationService.addRelation(requestDTO.getDoctorId(), requestDTO.getPatientId());
-        return ResponseEntity.status(201)
-                .body(ApiResponse.created(relation, "关系添加成功"));
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> addRelation(@Valid @RequestBody AddRelationRequestDTO requestDTO) {
+        logger.info("POST /admin/relations invoked. Request DTO: {}", requestDTO);
+        try {
+            logger.debug("Attempting to call relationService.addRelation");
+            Map<String, Object> newRelation = relationService.addRelation(requestDTO.getDoctorId(), requestDTO.getPatientId());
+            logger.info("Successfully added relation: {}", newRelation);
+            return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.created(newRelation, "关系添加成功"));
+        } catch (Exception e) {
+            logger.error("Exception in RelationController.addRelation: doctorId={}, patientId={}. Error: {}", 
+                         requestDTO.getDoctorId(), requestDTO.getPatientId(), e.getMessage(), e);
+            // Re-throw the exception to be handled by GlobalExceptionHandler
+            // This ensures that the response format is consistent and handled by GlobalExceptionHandler
+            throw e;
+        }
     }
 
     /**
@@ -72,11 +93,16 @@ public class RelationController {
      * @return 更新结果，包含新关系的信息
      */
     @PutMapping
-    public ResponseEntity<ApiResponse<Map<String, Object>>> updateRelation(
-            @Valid @RequestBody UpdateRelationRequestDTO requestDTO) {
-        
-        Map<String, Object> updatedRelation = relationService.replaceRelation(requestDTO);
-        return ResponseEntity.ok(ApiResponse.success(updatedRelation, "医患关系更新成功"));
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> updateRelation(@Valid @RequestBody UpdateRelationRequestDTO requestDTO) {
+        logger.info("PUT /admin/relations invoked with DTO: {}", requestDTO);
+        try {
+            Map<String, Object> updatedRelation = relationService.replaceRelation(requestDTO);
+            return ResponseEntity.ok(ApiResponse.success(updatedRelation, "医患关系更新成功"));
+        } catch (Exception e) {
+            logger.error("Error in updateRelation: ", e);
+            throw e;
+        }
     }
 
     /**
@@ -86,6 +112,7 @@ public class RelationController {
      * @return 删除结果
      */
     @DeleteMapping("/{doctorId}/{patientId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteRelation(
             @PathVariable String doctorId,
             @PathVariable String patientId) {
