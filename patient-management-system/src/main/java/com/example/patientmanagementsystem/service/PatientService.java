@@ -78,12 +78,13 @@ public class PatientService {
             }
             
             if (genderStr != null && !genderStr.isEmpty()) {
-                try {
-                    Patient.Gender genderEnum = Patient.Gender.valueOf(genderStr); // Attempt to convert string to enum
+                Patient.Gender genderEnum = Patient.Gender.fromString(genderStr); // Use existing fromString
+                if (genderEnum != null) {
                     predicates.add(criteriaBuilder.equal(root.get("gender"), genderEnum));
-                } catch (IllegalArgumentException e) {
-                    // If genderStr is not a valid enum constant, ignore this filter or throw an error
-                    // For now, ignoring: System.err.println("Invalid gender value: " + genderStr);
+                } else {
+                    // Log or handle invalid gender string if necessary, current behavior is to ignore
+                    // System.err.println("Invalid gender value: " + genderStr + ". Ignoring filter.");
+                    // Consider adding logger.warn("Invalid gender value: {}", genderStr);
                 }
             }
             
@@ -101,7 +102,7 @@ public class PatientService {
                         patient.getId(),
                         patient.getName(),
                         patient.getPhone(),
-                        patient.getGender() != null ? patient.getGender().toString() : null, // Handle null gender if possible in DB
+                        patient.getGender() != null ? patient.getGender().name() : null, // Use .name() for "男", "女"
                         patient.getBirthDate(),
                         patient.getIdNumber()
                 ))

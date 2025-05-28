@@ -85,7 +85,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleAccessDeniedException(AccessDeniedException ex) {
         logger.warn("权限不足: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ApiResponse.forbidden("权限不足，无法为该患者上传数据"));
+                .body(ApiResponse.forbidden("权限不足"));
     }
 
     /**

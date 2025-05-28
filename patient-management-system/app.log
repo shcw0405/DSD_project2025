@@ -696,3 +696,271 @@ Caused by: java.net.ConnectException: Connection refused: getsockopt
 2025-05-28 13:29:25.162  INFO 3608 --- [main] c.e.p.config.EmergencyAdminFixConfig     : 更新后管理员角色标志: 1
 2025-05-28 13:29:25.226  INFO 3608 --- [main] c.e.p.config.EmergencyAdminFixConfig     : 管理员密码匹配，无需更新
 2025-05-28 13:29:25.226  INFO 3608 --- [main] c.e.p.config.EmergencyAdminFixConfig     : 紧急修复管理员账号完成
+2025-05-28 13:35:05.975  INFO 3608 --- [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-28 13:35:05.976  INFO 3608 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-05-28 13:35:05.981  INFO 3608 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+2025-05-28 13:35:06.012  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.security.JwtAuthenticationFilter   : 处理请求: GET /api/session
+2025-05-28 13:35:06.014  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.security.JwtAuthenticationFilter   : 请求不包含有效JWT令牌
+2025-05-28 13:35:06.036 ERROR 3608 --- [http-nio-8080-exec-2] c.e.p.exception.GlobalExceptionHandler   : 发生未知服务器错误
+
+org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' not supported
+	at org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping.handleNoMatch(RequestMappingInfoHandlerMapping.java:260) ~[spring-webmvc-5.3.29.jar:5.3.29]
+	at org.springframework.web.servlet.handler.AbstractHandlerMethodMapping.lookupHandlerMethod(AbstractHandlerMethodMapping.java:442) ~[spring-webmvc-5.3.29.jar:5.3.29]
+	at org.springframework.web.servlet.handler.AbstractHandlerMethodMapping.getHandlerInternal(AbstractHandlerMethodMapping.java:383) ~[spring-webmvc-5.3.29.jar:5.3.29]
+	at org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping.getHandlerInternal(RequestMappingInfoHandlerMapping.java:125) ~[spring-webmvc-5.3.29.jar:5.3.29]
+	at org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping.getHandlerInternal(RequestMappingInfoHandlerMapping.java:67) ~[spring-webmvc-5.3.29.jar:5.3.29]
+	at org.springframework.web.servlet.handler.AbstractHandlerMapping.getHandler(AbstractHandlerMapping.java:498) ~[spring-webmvc-5.3.29.jar:5.3.29]
+	at org.springframework.web.servlet.DispatcherServlet.getHandler(DispatcherServlet.java:1266) ~[spring-webmvc-5.3.29.jar:5.3.29]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1048) ~[spring-webmvc-5.3.29.jar:5.3.29]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:965) ~[spring-webmvc-5.3.29.jar:5.3.29]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006) ~[spring-webmvc-5.3.29.jar:5.3.29]
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:898) ~[spring-webmvc-5.3.29.jar:5.3.29]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:529) ~[tomcat-embed-core-9.0.78.jar:4.0.FR]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) ~[spring-webmvc-5.3.29.jar:5.3.29]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:623) ~[tomcat-embed-core-9.0.78.jar:4.0.FR]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:209) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-9.0.78.jar:9.0.78]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:111) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:337) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:115) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:81) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:122) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:116) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:126) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:81) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:109) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:149) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at com.example.patientmanagementsystem.security.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:75) ~[classes/:na]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:103) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:89) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:112) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:82) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:55) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:221) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:186) ~[spring-security-web-5.7.10.jar:5.7.10]
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:354) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:267) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117) ~[spring-web-5.3.29.jar:5.3.29]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:481) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:130) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:390) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:926) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1791) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-9.0.78.jar:9.0.78]
+	at java.base/java.lang.Thread.run(Unknown Source) ~[na:na]
+
+2025-05-28 13:35:36.312  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.security.JwtAuthenticationFilter   : 处理请求: POST /api/session
+2025-05-28 13:35:36.312  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.security.JwtAuthenticationFilter   : 请求不包含有效JWT令牌
+2025-05-28 13:35:36.370  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.controller.AuthController          : 收到登录请求: username=13000000000
+2025-05-28 13:35:36.370  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.controller.AuthController          : 检测到管理员登录请求
+2025-05-28 13:35:36.373  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.service.AuthService                : 用户登录: username=13000000000
+2025-05-28 13:35:36.373  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.service.AuthService                : 检测到管理员登录，使用管理员专用登录方法
+2025-05-28 13:35:36.374  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.service.AuthService                : 管理员登录: 13000000000
+2025-05-28 13:35:36.377  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.service.AuthService                : 找到管理员用户: id=a421d099-6273-464a-b7d7-266d61cf07ea, isAdmin=true
+2025-05-28 13:35:36.433  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.service.AuthService                : 创建管理员认证对象，权限: [ROLE_ADMIN]
+2025-05-28 13:35:36.434  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.security.JwtTokenProvider          : 生成token: username=13000000000, roles=ROLE_ADMIN
+2025-05-28 13:35:36.436  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.service.AuthService                : 生成管理员token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMDUzNiwiZXhwIjoxNzQ4NDk2OTM2fQ.wRIg_WKXOIyoxD-H_fHKuRt6Z89pMLSvgH5PFKUy9Fs
+2025-05-28 13:35:36.436  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.service.AuthService                : 管理员登录成功: userId=a421d099-6273-464a-b7d7-266d61cf07ea, token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMDUzNiwiZXhwIjoxNzQ4NDk2OTM2fQ.wRIg_WKXOIyoxD-H_fHKuRt6Z89pMLSvgH5PFKUy9Fs
+2025-05-28 13:35:36.437  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.controller.AuthController          : 登录成功: userId=a421d099-6273-464a-b7d7-266d61cf07ea, isAdmin=true, token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMDUzNiwiZXhwIjoxNzQ4NDk2OTM2fQ.wRIg_WKXOIyoxD-H_fHKuRt6Z89pMLSvgH5PFKUy9Fs
+2025-05-28 13:36:53.258  INFO 3608 --- [http-nio-8080-exec-7] c.e.p.security.JwtAuthenticationFilter   : 处理请求: GET /api/admin/doctors
+2025-05-28 13:36:53.262  INFO 3608 --- [http-nio-8080-exec-7] c.e.p.security.JwtAuthenticationFilter   : 请求包含有效JWT令牌
+2025-05-28 13:36:53.265  INFO 3608 --- [http-nio-8080-exec-7] c.e.p.security.JwtAuthenticationFilter   : 从JWT令牌获取用户名: 13000000000
+2025-05-28 13:36:53.266  INFO 3608 --- [http-nio-8080-exec-7] c.e.p.security.CustomUserDetailsService  : 加载用户详情: username=13000000000
+2025-05-28 13:36:53.272  INFO 3608 --- [http-nio-8080-exec-7] c.e.p.security.CustomUserDetailsService  : 找到用户: id=a421d099-6273-464a-b7d7-266d61cf07ea, name=管理员, isAdmin=true, isDoctor=false, isPatient=false
+2025-05-28 13:36:53.273  INFO 3608 --- [http-nio-8080-exec-7] c.e.p.security.CustomUserDetailsService  : 用户拥有管理员角色
+2025-05-28 13:36:53.275  INFO 3608 --- [http-nio-8080-exec-7] c.e.p.security.CustomUserDetailsService  : 用户 13000000000 的权限: [ROLE_ADMIN]
+2025-05-28 13:36:53.278  INFO 3608 --- [http-nio-8080-exec-7] c.e.p.security.JwtAuthenticationFilter   : 加载用户详情: username=13000000000, authorities=[ROLE_ADMIN]
+2025-05-28 13:36:53.280  INFO 3608 --- [http-nio-8080-exec-7] c.e.p.security.JwtTokenProvider          : 从token获取角色: ROLE_ADMIN
+2025-05-28 13:36:53.282  INFO 3608 --- [http-nio-8080-exec-7] c.e.p.security.JwtTokenProvider          : 转换后的权限: [ROLE_ADMIN]
+2025-05-28 13:36:53.282  INFO 3608 --- [http-nio-8080-exec-7] c.e.p.security.JwtAuthenticationFilter   : 设置认证上下文: principal=org.springframework.security.core.userdetails.User [Username=13000000000, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, credentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_ADMIN]], authorities=[ROLE_ADMIN]
+2025-05-28 13:45:40.458  INFO 3608 --- [http-nio-8080-exec-10] c.e.p.security.JwtAuthenticationFilter   : 处理请求: GET /api/admin/patients
+2025-05-28 13:45:40.460 ERROR 3608 --- [http-nio-8080-exec-10] c.e.p.security.JwtTokenProvider          : JWT验证失败: JWT strings must contain exactly 2 period characters. Found: 0
+2025-05-28 13:45:40.460  INFO 3608 --- [http-nio-8080-exec-10] c.e.p.security.JwtAuthenticationFilter   : 请求不包含有效JWT令牌
+2025-05-28 13:45:48.203  INFO 3608 --- [http-nio-8080-exec-1] c.e.p.security.JwtAuthenticationFilter   : 处理请求: POST /api/session
+2025-05-28 13:45:48.203  INFO 3608 --- [http-nio-8080-exec-1] c.e.p.security.JwtAuthenticationFilter   : 请求不包含有效JWT令牌
+2025-05-28 13:45:48.205  INFO 3608 --- [http-nio-8080-exec-1] c.e.p.controller.AuthController          : 收到登录请求: username=13000000000
+2025-05-28 13:45:48.205  INFO 3608 --- [http-nio-8080-exec-1] c.e.p.controller.AuthController          : 检测到管理员登录请求
+2025-05-28 13:45:48.206  INFO 3608 --- [http-nio-8080-exec-1] c.e.p.service.AuthService                : 用户登录: username=13000000000
+2025-05-28 13:45:48.206  INFO 3608 --- [http-nio-8080-exec-1] c.e.p.service.AuthService                : 检测到管理员登录，使用管理员专用登录方法
+2025-05-28 13:45:48.206  INFO 3608 --- [http-nio-8080-exec-1] c.e.p.service.AuthService                : 管理员登录: 13000000000
+2025-05-28 13:45:48.210  INFO 3608 --- [http-nio-8080-exec-1] c.e.p.service.AuthService                : 找到管理员用户: id=a421d099-6273-464a-b7d7-266d61cf07ea, isAdmin=true
+2025-05-28 13:45:48.279  INFO 3608 --- [http-nio-8080-exec-1] c.e.p.service.AuthService                : 创建管理员认证对象，权限: [ROLE_ADMIN]
+2025-05-28 13:45:48.279  INFO 3608 --- [http-nio-8080-exec-1] c.e.p.security.JwtTokenProvider          : 生成token: username=13000000000, roles=ROLE_ADMIN
+2025-05-28 13:45:48.280  INFO 3608 --- [http-nio-8080-exec-1] c.e.p.service.AuthService                : 生成管理员token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTE0OCwiZXhwIjoxNzQ4NDk3NTQ4fQ.P0tP7D2_HhZP2uUQQ2EmGZ_TXFVQfwbeAJWi3klVZfo
+2025-05-28 13:45:48.281  INFO 3608 --- [http-nio-8080-exec-1] c.e.p.service.AuthService                : 管理员登录成功: userId=a421d099-6273-464a-b7d7-266d61cf07ea, token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTE0OCwiZXhwIjoxNzQ4NDk3NTQ4fQ.P0tP7D2_HhZP2uUQQ2EmGZ_TXFVQfwbeAJWi3klVZfo
+2025-05-28 13:45:48.281  INFO 3608 --- [http-nio-8080-exec-1] c.e.p.controller.AuthController          : 登录成功: userId=a421d099-6273-464a-b7d7-266d61cf07ea, isAdmin=true, token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTE0OCwiZXhwIjoxNzQ4NDk3NTQ4fQ.P0tP7D2_HhZP2uUQQ2EmGZ_TXFVQfwbeAJWi3klVZfo
+2025-05-28 13:45:53.275  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.security.JwtAuthenticationFilter   : 处理请求: POST /api/session
+2025-05-28 13:45:53.276  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.security.JwtAuthenticationFilter   : 请求不包含有效JWT令牌
+2025-05-28 13:45:53.280  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.controller.AuthController          : 收到登录请求: username=13000000000
+2025-05-28 13:45:53.281  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.controller.AuthController          : 检测到管理员登录请求
+2025-05-28 13:45:53.282  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.service.AuthService                : 用户登录: username=13000000000
+2025-05-28 13:45:53.283  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.service.AuthService                : 检测到管理员登录，使用管理员专用登录方法
+2025-05-28 13:45:53.284  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.service.AuthService                : 管理员登录: 13000000000
+2025-05-28 13:45:53.294  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.service.AuthService                : 找到管理员用户: id=a421d099-6273-464a-b7d7-266d61cf07ea, isAdmin=true
+2025-05-28 13:45:53.411  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.service.AuthService                : 创建管理员认证对象，权限: [ROLE_ADMIN]
+2025-05-28 13:45:53.412  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.security.JwtTokenProvider          : 生成token: username=13000000000, roles=ROLE_ADMIN
+2025-05-28 13:45:53.415  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.service.AuthService                : 生成管理员token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTE1MywiZXhwIjoxNzQ4NDk3NTUzfQ.VrvK7DiTVSR1k1x4AoPd1YG6HePQTx1goQnoIMGErp8
+2025-05-28 13:45:53.416  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.service.AuthService                : 管理员登录成功: userId=a421d099-6273-464a-b7d7-266d61cf07ea, token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTE1MywiZXhwIjoxNzQ4NDk3NTUzfQ.VrvK7DiTVSR1k1x4AoPd1YG6HePQTx1goQnoIMGErp8
+2025-05-28 13:45:53.417  INFO 3608 --- [http-nio-8080-exec-2] c.e.p.controller.AuthController          : 登录成功: userId=a421d099-6273-464a-b7d7-266d61cf07ea, isAdmin=true, token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTE1MywiZXhwIjoxNzQ4NDk3NTUzfQ.VrvK7DiTVSR1k1x4AoPd1YG6HePQTx1goQnoIMGErp8
+2025-05-28 13:46:53.284  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.security.JwtAuthenticationFilter   : 处理请求: POST /api/session
+2025-05-28 13:46:53.284  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.security.JwtAuthenticationFilter   : 请求不包含有效JWT令牌
+2025-05-28 13:46:53.286  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.controller.AuthController          : 收到登录请求: username=13000000000
+2025-05-28 13:46:53.287  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.controller.AuthController          : 检测到管理员登录请求
+2025-05-28 13:46:53.287  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.service.AuthService                : 用户登录: username=13000000000
+2025-05-28 13:46:53.287  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.service.AuthService                : 检测到管理员登录，使用管理员专用登录方法
+2025-05-28 13:46:53.288  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.service.AuthService                : 管理员登录: 13000000000
+2025-05-28 13:46:53.292  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.service.AuthService                : 找到管理员用户: id=a421d099-6273-464a-b7d7-266d61cf07ea, isAdmin=true
+2025-05-28 13:46:53.350  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.service.AuthService                : 创建管理员认证对象，权限: [ROLE_ADMIN]
+2025-05-28 13:46:53.351  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.security.JwtTokenProvider          : 生成token: username=13000000000, roles=ROLE_ADMIN
+2025-05-28 13:46:53.353  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.service.AuthService                : 生成管理员token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTIxMywiZXhwIjoxNzQ4NDk3NjEzfQ.FoSqjWVZpL4xqaHSOBNs4NUzxutZOZWgtl9aFxjH-NI
+2025-05-28 13:46:53.353  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.service.AuthService                : 管理员登录成功: userId=a421d099-6273-464a-b7d7-266d61cf07ea, token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTIxMywiZXhwIjoxNzQ4NDk3NjEzfQ.FoSqjWVZpL4xqaHSOBNs4NUzxutZOZWgtl9aFxjH-NI
+2025-05-28 13:46:53.354  INFO 3608 --- [http-nio-8080-exec-4] c.e.p.controller.AuthController          : 登录成功: userId=a421d099-6273-464a-b7d7-266d61cf07ea, isAdmin=true, token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTIxMywiZXhwIjoxNzQ4NDk3NjEzfQ.FoSqjWVZpL4xqaHSOBNs4NUzxutZOZWgtl9aFxjH-NI
+2025-05-28 13:47:01.924  INFO 3608 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-28 13:47:01.926  INFO 3608 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-05-28 13:47:01.931  INFO 3608 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-05-28 13:47:03.707  INFO 16168 --- [main] c.e.p.PatientManagementSystemApplication : Starting PatientManagementSystemApplication using Java 21.0.7 on 少华从文 with PID 16168 (C:\Users\10263\Downloads\patient-management-system-complete\patient-management-system\target\classes started by 10263 in C:\Users\10263\Downloads\patient-management-system-complete\patient-management-system)
+2025-05-28 13:47:03.710 DEBUG 16168 --- [main] c.e.p.PatientManagementSystemApplication : Running with Spring Boot v2.7.14, Spring v5.3.29
+2025-05-28 13:47:03.710  INFO 16168 --- [main] c.e.p.PatientManagementSystemApplication : No active profile set, falling back to 1 default profile: "default"
+2025-05-28 13:47:04.458  INFO 16168 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-28 13:47:04.528  INFO 16168 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 61 ms. Found 6 JPA repository interfaces.
+2025-05-28 13:47:05.361  INFO 16168 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2025-05-28 13:47:05.371  INFO 16168 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-05-28 13:47:05.371  INFO 16168 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.78]
+2025-05-28 13:47:05.497  INFO 16168 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-05-28 13:47:05.498  INFO 16168 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1745 ms
+2025-05-28 13:47:05.809  WARN 16168 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-28 13:47:06.302  INFO 16168 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-05-28 13:47:06.443  INFO 16168 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-05-28 13:47:07.403  INFO 16168 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-28 13:47:07.828 DEBUG 16168 --- [main] c.e.p.security.JwtAuthenticationFilter   : Filter 'jwtAuthenticationFilter' configured for use
+2025-05-28 13:47:07.840  INFO 16168 --- [main] c.e.p.config.AdminAccountInitializer     : AdminAccountInitializer初始化，管理员账号: 13000000000 
+2025-05-28 13:47:08.373  INFO 16168 --- [main] c.e.p.service.AuthService                : === 开始初始化管理员账号 ===
+2025-05-28 13:47:08.507  INFO 16168 --- [main] c.e.p.service.AuthService                : 找到管理员账号: id=a421d099-6273-464a-b7d7-266d61cf07ea, name=管理员, isAdmin=true
+2025-05-28 13:47:08.508  INFO 16168 --- [main] c.e.p.service.AuthService                : === 管理员账号初始化完成 ===
+2025-05-28 13:47:08.693  INFO 16168 --- [main] c.e.p.service.DataService                : Python脚本已复制到临时可执行路径: C:\Users\10263\AppData\Local\Temp\pms_scripts_cd800765\processorOfRawData.py
+2025-05-28 13:47:08.988  INFO 16168 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5978ba12, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@43f5b014, org.springframework.security.web.context.SecurityContextPersistenceFilter@1d7f0cd0, org.springframework.security.web.header.HeaderWriterFilter@6e5a77ef, org.springframework.web.filter.CorsFilter@6b7e4db6, org.springframework.security.web.authentication.logout.LogoutFilter@6f53295e, com.example.patientmanagementsystem.security.JwtAuthenticationFilter@301f9aa0, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@113e6e06, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@496004e3, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@5c59dfc7, org.springframework.security.web.session.SessionManagementFilter@3fe21d0e, org.springframework.security.web.access.ExceptionTranslationFilter@121c1a08, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@5d03df76]
+2025-05-28 13:47:10.036  INFO 16168 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path '/api'
+2025-05-28 13:47:10.050  INFO 16168 --- [main] c.e.p.PatientManagementSystemApplication : Started PatientManagementSystemApplication in 6.72 seconds (JVM running for 7.045)
+2025-05-28 13:47:10.058  INFO 16168 --- [main] c.e.p.config.AdminAccountInitializer     : 开始初始化管理员账号...
+2025-05-28 13:47:10.062  INFO 16168 --- [main] c.e.p.config.AdminAccountInitializer     : 管理员账号已存在，ID: a3f8b42c-74cf-4584-af5e-730686e469c6, isAdmin: true
+2025-05-28 13:47:10.176  INFO 16168 --- [main] c.e.p.config.AdminAccountInitializer     : 更新管理员密码和信息完成
+2025-05-28 13:47:10.255  INFO 16168 --- [main] c.e.p.config.AdminAccountInitializer     : 管理员账号验证: ID=a3f8b42c-74cf-4584-af5e-730686e469c6, isAdmin=true, passwordMatches=true
+2025-05-28 13:47:10.255  INFO 16168 --- [main] c.e.p.config.AdminAccountInitializer     : 管理员账号初始化完成
+2025-05-28 13:47:10.276  INFO 16168 --- [main] c.e.p.config.AdminUserInitializer        : Default admin user with phone: 13000000000  already exists.
+2025-05-28 13:47:10.350  INFO 16168 --- [main] c.e.p.c.AdminComprehensiveFixConfig      : 开始全面修复管理员账号和权限...
+2025-05-28 13:47:10.361  INFO 16168 --- [main] c.e.p.c.AdminComprehensiveFixConfig      : 数据库中管理员角色标志: 1
+2025-05-28 13:47:10.442  INFO 16168 --- [main] c.e.p.c.AdminComprehensiveFixConfig      : 管理员密码匹配: true
+2025-05-28 13:47:10.444  INFO 16168 --- [main] c.e.p.security.JwtTokenProvider          : 生成token: username=13000000000 , roles=ROLE_ADMIN
+2025-05-28 13:47:10.488  INFO 16168 --- [main] c.e.p.c.AdminComprehensiveFixConfig      : 生成管理员token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCAiLCJyb2xlcyI6IlJPTEVfQURNSU4iLCJpYXQiOjE3NDg0MTEyMzAsImV4cCI6MTc0ODQ5NzYzMH0.eGurR6XTlFyMyuQzxRgtR3gcak83zD6ESMvDXTMgtF8
+2025-05-28 13:47:10.510  INFO 16168 --- [main] c.e.p.c.AdminComprehensiveFixConfig      : Token中的角色: ROLE_ADMIN
+2025-05-28 13:47:10.511  INFO 16168 --- [main] c.e.p.c.AdminComprehensiveFixConfig      : 管理员账号和权限修复完成
+2025-05-28 13:47:10.511  INFO 16168 --- [main] c.e.p.config.AdminRoleFixConfig          : 开始修复管理员角色...
+2025-05-28 13:47:10.514  INFO 16168 --- [main] c.e.p.config.AdminRoleFixConfig          : 找到管理员账号: 13000000000  (ID: a3f8b42c-74cf-4584-af5e-730686e469c6)
+2025-05-28 13:47:10.515  INFO 16168 --- [main] c.e.p.config.AdminRoleFixConfig          : 管理员角色已正确设置，无需更新
+2025-05-28 13:47:10.516  INFO 16168 --- [main] c.e.p.config.AdminRoleFixConfig          : 数据库中管理员角色标志: 1
+2025-05-28 13:47:10.517  INFO 16168 --- [main] c.e.p.config.AdminUserFixConfig          : 开始强制重新创建管理员账号...
+2025-05-28 13:47:10.521  INFO 16168 --- [main] c.e.p.config.AdminUserFixConfig          : 找到现有管理员账号，准备删除重建: 13000000000 
+2025-05-28 13:47:10.631  INFO 16168 --- [main] c.e.p.config.AdminUserFixConfig          : 管理员账号强制重建完成: 13000000000  (ID: 7912a598-1359-42fb-a1ee-30cf2f745f54)
+2025-05-28 13:47:10.631  INFO 16168 --- [main] c.e.p.config.AdminUserFixConfig          : 管理员密码已加密: $2a$10$JOqEU99xLnGAP84ITUV4tOdwdW0F9fTMg9qJ9vRZK8VppMU6NpfkK
+2025-05-28 13:47:10.688  INFO 16168 --- [main] c.e.p.config.AdminUserFixConfig          : 密码匹配验证: 成功
+2025-05-28 13:47:10.688  INFO 16168 --- [main] c.e.p.config.DirectAdminFixConfig        : 开始直接数据库操作修复管理员账号...
+2025-05-28 13:47:10.689  INFO 16168 --- [main] c.e.p.config.DirectAdminFixConfig        : 管理员账号已存在，更新账号信息
+2025-05-28 13:47:10.752  INFO 16168 --- [main] c.e.p.config.DirectAdminFixConfig        : 更新管理员账号: 1 行受影响
+2025-05-28 13:47:10.819  INFO 16168 --- [main] c.e.p.config.DirectAdminFixConfig        : 管理员账号验证: ID=7912a598-1359-42fb-a1ee-30cf2f745f54, isAdmin=true, passwordMatches=true
+2025-05-28 13:47:10.820  INFO 16168 --- [main] c.e.p.config.DirectAdminFixConfig        : 直接数据库操作修复管理员账号完成
+2025-05-28 13:47:10.821  INFO 16168 --- [main] c.e.p.config.EmergencyAdminFixConfig     : 开始紧急修复管理员账号...
+2025-05-28 13:47:10.822  INFO 16168 --- [main] c.e.p.config.EmergencyAdminFixConfig     : 管理员账号已存在，尝试更新角色标志
+2025-05-28 13:47:10.823  INFO 16168 --- [main] c.e.p.config.EmergencyAdminFixConfig     : 更新管理员角色标志: 1 行受影响
+2025-05-28 13:47:10.825  INFO 16168 --- [main] c.e.p.config.EmergencyAdminFixConfig     : 更新后管理员角色标志: 1
+2025-05-28 13:47:10.881  INFO 16168 --- [main] c.e.p.config.EmergencyAdminFixConfig     : 管理员密码匹配，无需更新
+2025-05-28 13:47:10.882  INFO 16168 --- [main] c.e.p.config.EmergencyAdminFixConfig     : 紧急修复管理员账号完成
+2025-05-28 13:49:04.548  INFO 16168 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-28 13:49:04.549  INFO 16168 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-05-28 13:49:04.551  INFO 16168 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-05-28 13:49:04.564  INFO 16168 --- [http-nio-8080-exec-1] c.e.p.security.JwtAuthenticationFilter   : 处理请求: POST /api/session
+2025-05-28 13:49:04.564  INFO 16168 --- [http-nio-8080-exec-1] c.e.p.security.JwtAuthenticationFilter   : 请求不包含有效JWT令牌
+2025-05-28 13:49:04.632  INFO 16168 --- [http-nio-8080-exec-1] c.e.p.controller.AuthController          : 收到登录请求: username=13000000000
+2025-05-28 13:49:04.633  INFO 16168 --- [http-nio-8080-exec-1] c.e.p.controller.AuthController          : 检测到管理员登录请求
+2025-05-28 13:49:04.635  INFO 16168 --- [http-nio-8080-exec-1] c.e.p.service.AuthService                : 用户登录: username=13000000000
+2025-05-28 13:49:04.636  INFO 16168 --- [http-nio-8080-exec-1] c.e.p.service.AuthService                : 检测到管理员登录，使用管理员专用登录方法
+2025-05-28 13:49:04.637  INFO 16168 --- [http-nio-8080-exec-1] c.e.p.service.AuthService                : 管理员登录: 13000000000
+2025-05-28 13:49:04.640  INFO 16168 --- [http-nio-8080-exec-1] c.e.p.service.AuthService                : 找到管理员用户: id=a421d099-6273-464a-b7d7-266d61cf07ea, isAdmin=true
+2025-05-28 13:49:04.698  INFO 16168 --- [http-nio-8080-exec-1] c.e.p.service.AuthService                : 创建管理员认证对象，权限: [ROLE_ADMIN]
+2025-05-28 13:49:04.699  INFO 16168 --- [http-nio-8080-exec-1] c.e.p.security.JwtTokenProvider          : 生成token: username=13000000000, roles=ROLE_ADMIN
+2025-05-28 13:49:04.700  INFO 16168 --- [http-nio-8080-exec-1] c.e.p.service.AuthService                : 生成管理员token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTM0NCwiZXhwIjoxNzQ4NDk3NzQ0fQ.0p_dUuirIWOpPN_O9G3J-o-h8P2DO3tR1OlYRWt_Iek
+2025-05-28 13:49:04.700  INFO 16168 --- [http-nio-8080-exec-1] c.e.p.service.AuthService                : 管理员登录成功: userId=a421d099-6273-464a-b7d7-266d61cf07ea, token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTM0NCwiZXhwIjoxNzQ4NDk3NzQ0fQ.0p_dUuirIWOpPN_O9G3J-o-h8P2DO3tR1OlYRWt_Iek
+2025-05-28 13:49:04.701  INFO 16168 --- [http-nio-8080-exec-1] c.e.p.controller.AuthController          : 登录成功: userId=a421d099-6273-464a-b7d7-266d61cf07ea, isAdmin=true, token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTM0NCwiZXhwIjoxNzQ4NDk3NzQ0fQ.0p_dUuirIWOpPN_O9G3J-o-h8P2DO3tR1OlYRWt_Iek
+2025-05-28 13:50:42.894  INFO 16168 --- [http-nio-8080-exec-5] c.e.p.security.JwtAuthenticationFilter   : 处理请求: POST /api/session
+2025-05-28 13:50:42.894  INFO 16168 --- [http-nio-8080-exec-5] c.e.p.security.JwtAuthenticationFilter   : 请求不包含有效JWT令牌
+2025-05-28 13:50:42.897  INFO 16168 --- [http-nio-8080-exec-5] c.e.p.controller.AuthController          : 收到登录请求: username=13000000000
+2025-05-28 13:50:42.898  INFO 16168 --- [http-nio-8080-exec-5] c.e.p.controller.AuthController          : 检测到管理员登录请求
+2025-05-28 13:50:42.898  INFO 16168 --- [http-nio-8080-exec-5] c.e.p.service.AuthService                : 用户登录: username=13000000000
+2025-05-28 13:50:42.899  INFO 16168 --- [http-nio-8080-exec-5] c.e.p.service.AuthService                : 检测到管理员登录，使用管理员专用登录方法
+2025-05-28 13:50:42.900  INFO 16168 --- [http-nio-8080-exec-5] c.e.p.service.AuthService                : 管理员登录: 13000000000
+2025-05-28 13:50:42.907  INFO 16168 --- [http-nio-8080-exec-5] c.e.p.service.AuthService                : 找到管理员用户: id=a421d099-6273-464a-b7d7-266d61cf07ea, isAdmin=true
+2025-05-28 13:50:42.963  INFO 16168 --- [http-nio-8080-exec-5] c.e.p.service.AuthService                : 创建管理员认证对象，权限: [ROLE_ADMIN]
+2025-05-28 13:50:42.964  INFO 16168 --- [http-nio-8080-exec-5] c.e.p.security.JwtTokenProvider          : 生成token: username=13000000000, roles=ROLE_ADMIN
+2025-05-28 13:50:42.965  INFO 16168 --- [http-nio-8080-exec-5] c.e.p.service.AuthService                : 生成管理员token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTQ0MiwiZXhwIjoxNzQ4NDk3ODQyfQ.LCCdqM-QIU6oFd0uOkS_6cKBD9sir1x3Cg0uSK5pcyo
+2025-05-28 13:50:42.966  INFO 16168 --- [http-nio-8080-exec-5] c.e.p.service.AuthService                : 管理员登录成功: userId=a421d099-6273-464a-b7d7-266d61cf07ea, token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTQ0MiwiZXhwIjoxNzQ4NDk3ODQyfQ.LCCdqM-QIU6oFd0uOkS_6cKBD9sir1x3Cg0uSK5pcyo
+2025-05-28 13:50:42.966  INFO 16168 --- [http-nio-8080-exec-5] c.e.p.controller.AuthController          : 登录成功: userId=a421d099-6273-464a-b7d7-266d61cf07ea, isAdmin=true, token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMzAwMDAwMDAwMCIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc0ODQxMTQ0MiwiZXhwIjoxNzQ4NDk3ODQyfQ.LCCdqM-QIU6oFd0uOkS_6cKBD9sir1x3Cg0uSK5pcyo
+2025-05-28 13:51:18.835  INFO 16168 --- [http-nio-8080-exec-6] c.e.p.security.JwtAuthenticationFilter   : 处理请求: GET /api/admin/patients
+2025-05-28 13:51:18.840  INFO 16168 --- [http-nio-8080-exec-6] c.e.p.security.JwtAuthenticationFilter   : 请求包含有效JWT令牌
+2025-05-28 13:51:18.844  INFO 16168 --- [http-nio-8080-exec-6] c.e.p.security.JwtAuthenticationFilter   : 从JWT令牌获取用户名: 13000000000
+2025-05-28 13:51:18.845  INFO 16168 --- [http-nio-8080-exec-6] c.e.p.security.CustomUserDetailsService  : 加载用户详情: username=13000000000
+2025-05-28 13:51:18.854  INFO 16168 --- [http-nio-8080-exec-6] c.e.p.security.CustomUserDetailsService  : 找到用户: id=a421d099-6273-464a-b7d7-266d61cf07ea, name=管理员, isAdmin=true, isDoctor=false, isPatient=false
+2025-05-28 13:51:18.855  INFO 16168 --- [http-nio-8080-exec-6] c.e.p.security.CustomUserDetailsService  : 用户拥有管理员角色
+2025-05-28 13:51:18.857  INFO 16168 --- [http-nio-8080-exec-6] c.e.p.security.CustomUserDetailsService  : 用户 13000000000 的权限: [ROLE_ADMIN]
+2025-05-28 13:51:18.860  INFO 16168 --- [http-nio-8080-exec-6] c.e.p.security.JwtAuthenticationFilter   : 加载用户详情: username=13000000000, authorities=[ROLE_ADMIN]
+2025-05-28 13:51:18.863  INFO 16168 --- [http-nio-8080-exec-6] c.e.p.security.JwtTokenProvider          : 从token获取角色: ROLE_ADMIN
+2025-05-28 13:51:18.864  INFO 16168 --- [http-nio-8080-exec-6] c.e.p.security.JwtTokenProvider          : 转换后的权限: [ROLE_ADMIN]
+2025-05-28 13:51:18.864  INFO 16168 --- [http-nio-8080-exec-6] c.e.p.security.JwtAuthenticationFilter   : 设置认证上下文: principal=org.springframework.security.core.userdetails.User [Username=13000000000, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, credentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_ADMIN]], authorities=[ROLE_ADMIN]

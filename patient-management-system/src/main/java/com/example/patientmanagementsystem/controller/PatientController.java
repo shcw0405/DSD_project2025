@@ -37,7 +37,7 @@ public class PatientController {
      */
     @GetMapping("/admin/patients")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<PatientListResponseDTO>> getPatients(
+    public ResponseEntity<ApiResponse<List<PatientDTO>>> getPatients(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int pageSize,
             @RequestParam(required = false) String name,
@@ -46,7 +46,7 @@ public class PatientController {
             @RequestParam(required = false) String idNumber) {
         
         PatientListResponseDTO result = patientService.getPatients(page, pageSize, name, phone, gender, idNumber);
-        return ResponseEntity.ok(ApiResponse.success(result, "获取患者列表成功"));
+        return ResponseEntity.ok(ApiResponse.success(result.getData(), result.getTotal(), "获取患者列表成功"));
     }
 
     /**
