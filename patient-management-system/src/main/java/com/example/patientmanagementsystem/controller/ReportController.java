@@ -26,7 +26,7 @@ import java.util.Map;
  * 处理患者报告相关的CRUD操作
  */
 @RestController
-@RequestMapping("/reports")
+@RequestMapping("/report")
 @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
 public class ReportController {
 

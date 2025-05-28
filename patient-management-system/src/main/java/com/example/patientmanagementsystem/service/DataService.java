@@ -128,10 +128,10 @@ public class DataService {
             logger.error("Python脚本路径未初始化。CSV处理无法继续。");
             throw new BusinessException("服务器配置错误：Python脚本路径未就绪。");
         }
-        Patient patient = patientRepository.findById(patientIdStr)
+        Patient patient = patientRepository.findByUser_Id(patientIdStr)
                 .orElseThrow(() -> {
-                    logger.warn("上传CSV失败：患者ID '{}' 不存在.", patientIdStr);
-                    return new BusinessException("请求错误：患者 ID '" + patientIdStr + "' 不存在");
+                    logger.warn("上传CSV失败：未找到与用户ID '{}' 关联的患者记录.", patientIdStr);
+                    return new BusinessException("请求错误：未找到与用户ID '" + patientIdStr + "' 关联的患者记录");
                 });
 
         List<File> tempRawFiles = new ArrayList<>();

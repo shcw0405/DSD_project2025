@@ -122,6 +122,7 @@ public class AdminController {
      * @return 医生简略信息列表
      */
     @GetMapping("/doctors/search")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
     public ResponseEntity<ApiResponse<List<Map<String, Object>>>> searchDoctors(
             @RequestParam(required = false, defaultValue = "") String query) {
         
